@@ -1,0 +1,1 @@
+'build' and 'devel' folders are not included. Each person will build it's own workspace.

@@ -1,0 +1,4 @@
+<launch>
+    <node name="car_commands_node" pkg="car_control" type="car_commands_node" respawn="false" output="screen" />
+    <rosparam file="$(find car_control)/config/car_commands_conf.yaml" command="load" />
+</launch>
