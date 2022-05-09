@@ -1,0 +1,88 @@
+\documentclass[12pt, letterpaper, oneside]{report}
+
+\usepackage[a4paper, portrait, margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{concmath} % Text Font
+\usepackage[T1]{fontenc}
+\usepackage{tabularx} % Manage Tables
+\usepackage{fancyhdr} % For Headers and Footers
+
+\title{"Control of Mobile Robot" Project}
+\author{Colli Stefano, Pagani Mattia, Panelli Erica}
+\date{\today}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{CMR Project}
+\lhead{User Manual}
+\rfoot{\thepage}
+
+\begin{document}
+	
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\tableofcontents
+
+\newpage
+
+%\section{Gazebo Body Parameters}
+%
+%\begin{itemize}
+%	\item $\mu_0$: friction coefficient of direction 1
+%	\item $\mu_1$: friction coefficient of direction 2
+%	\item fdir: specify direction of $\mu_0$, direction of $\mu_1$ is perpendicular to this parameter
+%	\item $k_p$: stiffness between bodies
+%	\item $k_d$: dumping between bodies
+%\end{itemize}
+
+\chapter{Notes on Installation and Launch}
+
+\chapter{General Project Structure}
+
+\section{Catkin Workspace Directories}
+
+\subsection{Original MIT Racecar Packages}
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{
+			| >{\raggedright\arraybackslash}X
+			| >{\raggedright\arraybackslash}X |
+		}
+		\hline
+		ackermann\_cmd\_mux & ... \\
+		\hline
+		ackermann\_msgs & ... \\
+		\hline
+		racecar & ... \\
+		\hline
+		racecar\_control & Contains launch files to load controllers used to manage the motors of the racecar. Also load nodes which dispatch messages to controllers. \\
+		\hline
+		racecar\_description & Contains a description of the racecar, in terms of models, meshes ecc... It will be used by Gazebo to represent it. \\
+		\hline
+		racecar\_gazebo & Mainly contains launch scripts used to load all necessary nodes, worlds and other components to open a Gazebo instance with a controllable car. \\
+		\hline
+	\end{tabularx}
+\end{center}
+
+\subsection{Added Packages}
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{
+			| >{\raggedright\arraybackslash}X
+			| >{\raggedright\arraybackslash}X |
+		}
+		\hline
+		car\_control & Contains nodes used to send commands to the racecar, receive odometry data and control the car autonomously. \\
+		\hline
+	\end{tabularx}
+\end{center}
+
+\chapter{Original System Introduction}
+\chapter{(Our) System Description}
+\chapter{Detailed Package Description}
+
+\end{document}
