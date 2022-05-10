@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.26)  9 MAY 2022 19:41
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.26)  10 MAY 2022 11:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -169,20 +169,20 @@ File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
 (./user_manual.aux)
 \openout1 = `user_manual.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -219,76 +219,76 @@ LaTeX Font Info:    ... okay on input line 21.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 LaTeX Font Info:    Trying to load font information for OT1+ccr on input line 2
-3.
+4.
 (/usr/share/texlive/texmf-dist/tex/latex/concmath/ot1ccr.fd
 File: ot1ccr.fd 1999/03/10 v2.0b LaTeX font defs for Concrete math fonts
 )
 LaTeX Font Info:    Trying to load font information for OML+ccm on input line 2
-3.
+4.
 
 (/usr/share/texlive/texmf-dist/tex/latex/concmath/omlccm.fd
 File: omlccm.fd 1999/03/10 v2.0b LaTeX font defs for Concrete math fonts
 )
 LaTeX Font Info:    Trying to load font information for OMS+ccsy on input line 
-23.
+24.
 
 (/usr/share/texlive/texmf-dist/tex/latex/concmath/omsccsy.fd
 File: omsccsy.fd 1999/03/10 v2.0b LaTeX font defs for Concrete math fonts
 )
 LaTeX Font Info:    Trying to load font information for OMX+ccex on input line 
-23.
+24.
 
 (/usr/share/texlive/texmf-dist/tex/latex/concmath/omxccex.fd
 File: omxccex.fd 1999/03/10 v2.0b LaTeX font defs for Concrete math fonts
 )
 LaTeX Font Info:    External font `xccex10' loaded for size
-(Font)              <14.4> on input line 23.
+(Font)              <14.4> on input line 24.
 LaTeX Font Info:    External font `xccex10' loaded for size
-(Font)              <10> on input line 23.
+(Font)              <10> on input line 24.
 LaTeX Font Info:    External font `xccex10' loaded for size
-(Font)              <7> on input line 23.
+(Font)              <7> on input line 24.
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 
 LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
-(Font)              using `T1/ccr/bx/n' instead on input line 25.
+(Font)              using `T1/ccr/bx/n' instead on input line 26.
 
 LaTeX Font Info:    Font shape `T1/ccr/bx/n' in size <12> not available
-(Font)              Font shape `T1/cmr/bx/n' tried instead on input line 25.
+(Font)              Font shape `T1/cmr/bx/n' tried instead on input line 26.
 [1]
 
 LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
-(Font)              using `T1/ccr/bx/n' instead on input line 28.
+(Font)              using `T1/ccr/bx/n' instead on input line 29.
 
 LaTeX Font Info:    Font shape `T1/ccr/bx/n' in size <24.88> not available
-(Font)              Font shape `T1/cmr/bx/n' tried instead on input line 28.
+(Font)              Font shape `T1/cmr/bx/n' tried instead on input line 29.
 (./user_manual.toc
 
 LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
 (Font)              using `T1/ccr/bx/n' instead on input line 2.
 
-
-LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
-(Font)              using `T1/ccr/bx/n' instead on input line 3.
-
 LaTeX Font Info:    External font `xccex10' loaded for size
-(Font)              <12> on input line 4.
+(Font)              <12> on input line 3.
 LaTeX Font Info:    External font `xccex10' loaded for size
-(Font)              <8> on input line 4.
+(Font)              <8> on input line 3.
 LaTeX Font Info:    External font `xccex10' loaded for size
-(Font)              <6> on input line 4.
-
-LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
-(Font)              using `T1/ccr/bx/n' instead on input line 7.
-
+(Font)              <6> on input line 3.
 
 LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
 (Font)              using `T1/ccr/bx/n' instead on input line 8.
 
 
 LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
-(Font)              using `T1/ccr/bx/n' instead on input line 9.
+(Font)              using `T1/ccr/bx/n' instead on input line 12.
+
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 13.
+
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 14.
 
 )
 \tf@toc=\write3
@@ -300,7 +300,31 @@ LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
 Chapter 1.
 
 LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
-(Font)              using `T1/ccr/bx/n' instead on input line 42.
+(Font)              using `T1/ccr/bx/n' instead on input line 43.
+
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 45.
+
+LaTeX Font Info:    Font shape `T1/ccr/bx/n' in size <17.28> not available
+(Font)              Font shape `T1/cmr/bx/n' tried instead on input line 45.
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 47.
+
+LaTeX Font Info:    Font shape `T1/ccr/bx/n' in size <14.4> not available
+(Font)              Font shape `T1/cmr/bx/n' tried instead on input line 47.
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 49.
+
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 51.
+
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 53.
 
 [2
 
@@ -308,23 +332,42 @@ LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
 Chapter 2.
 
 LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
-(Font)              using `T1/ccr/bx/n' instead on input line 44.
+(Font)              using `T1/ccr/bx/n' instead on input line 55.
 
 
 LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
-(Font)              using `T1/ccr/bx/n' instead on input line 46.
+(Font)              using `T1/ccr/bx/n' instead on input line 57.
 
-LaTeX Font Info:    Font shape `T1/ccr/bx/n' in size <17.28> not available
-(Font)              Font shape `T1/cmr/bx/n' tried instead on input line 46.
 
 LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
-(Font)              using `T1/ccr/bx/n' instead on input line 48.
+(Font)              using `T1/ccr/bx/n' instead on input line 59.
 
-LaTeX Font Info:    Font shape `T1/ccr/bx/n' in size <14.4> not available
-(Font)              Font shape `T1/cmr/bx/n' tried instead on input line 48.
 
 LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
-(Font)              using `T1/ccr/bx/n' instead on input line 71.
+(Font)              using `T1/ccr/bx/n' instead on input line 79.
+
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 79.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 79--79
+[]|\T1/ccr/m/n/12 Contains def-i-ni-tions of \T1/cmr/bx/n/12 Ack-er-man-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 79--79
+\T1/cmr/bx/n/12 nDrive \T1/ccr/m/n/12 and \T1/cmr/bx/n/12 Ack-er-man-nDriveS-
+ []
+
+
+Underfull \hbox (badness 1127) in paragraph at lines 79--79
+\T1/ccr/m/n/12 load all nec-es-sary nodes, worlds and
+ []
+
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 82.
 
 [3
 
@@ -332,7 +375,7 @@ LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
 Chapter 3.
 
 LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
-(Font)              using `T1/ccr/bx/n' instead on input line 84.
+(Font)              using `T1/ccr/bx/n' instead on input line 95.
 
 [4
 
@@ -340,7 +383,7 @@ LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
 Chapter 4.
 
 LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
-(Font)              using `T1/ccr/bx/n' instead on input line 85.
+(Font)              using `T1/ccr/bx/n' instead on input line 96.
 
 [5
 
@@ -348,28 +391,49 @@ LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
 Chapter 5.
 
 LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
-(Font)              using `T1/ccr/bx/n' instead on input line 86.
+(Font)              using `T1/ccr/bx/n' instead on input line 97.
+
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 99.
+
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 101.
+
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 103.
+
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 107.
+
+
+LaTeX Font Warning: Font shape `T1/ccr/b/n' undefined
+(Font)              using `T1/ccr/bx/n' instead on input line 108.
 
 [6
 
 ] (./user_manual.aux) ) 
 Here is how much of TeX's memory you used:
- 2136 strings out of 481239
- 30462 string characters out of 5920376
- 279613 words of memory out of 5000000
- 17393 multiletter control sequences out of 15000+600000
- 545396 words of font info for 53 fonts, out of 8000000 for 9000
+ 2138 strings out of 481239
+ 30482 string characters out of 5920376
+ 280613 words of memory out of 5000000
+ 17394 multiletter control sequences out of 15000+600000
+ 546089 words of font info for 54 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 30i,8n,45p,269b,225s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 30i,8n,45p,287b,259s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.e
 nc}</usr/share/texmf/fonts/type1/public/cm-super/sfbx1200.pfb></usr/share/texmf
 /fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/
 cm-super/sfbx1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx2488.pf
-b></usr/share/texmf/fonts/type1/public/cm-super/sform10.pfb>
-Output written on user_manual.pdf (8 pages, 84910 bytes).
+b></usr/share/texmf/fonts/type1/public/cm-super/sform10.pfb></usr/share/texmf/f
+onts/type1/public/cm-super/sfoti10.pfb>
+Output written on user_manual.pdf (8 pages, 109932 bytes).
 PDF statistics:
- 52 PDF objects out of 1000 (max. 8388607)
- 36 compressed objects within 1 object stream
+ 56 PDF objects out of 1000 (max. 8388607)
+ 39 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
