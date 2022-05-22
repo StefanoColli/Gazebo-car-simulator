@@ -142,6 +142,7 @@ include_directories(
 # add_executable(${PROJECT_NAME}_node src/car_control_node.cpp)
 add_executable(car_commands_node src/car_commands_node.cpp src/car_commands.cpp)
 add_executable(car_odometry_reader_node src/car_odometry_reader_node.cpp src/car_odometry_reader.cpp)
+add_executable(car_controller src/car_controller_node.cpp src/car_controller.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -159,6 +160,7 @@ add_executable(car_odometry_reader_node src/car_odometry_reader_node.cpp src/car
 # )
 target_link_libraries(car_commands_node ${catkin_LIBRARIES})
 target_link_libraries(car_odometry_reader_node ${catkin_LIBRARIES})
+target_link_libraries(car_controller ${catkin_LIBRARIES})
 
 #############
 ## Install ##
