@@ -1,0 +1,7 @@
+<launch>
+    <env name="ROSCONSOLE_CONFIG_FILE" value="$(find car_kinematic_control)/config/custom_rosconsole.conf"/>
+
+    <node name="car_kin_controller_node" pkg="car_kinematic_control" type="car_kin_controller_node" respawn="false" output="screen" />
+
+    <rosparam file="$(find car_kinematic_control)/config/car_params_conf.yaml" command="load" />
+</launch>
