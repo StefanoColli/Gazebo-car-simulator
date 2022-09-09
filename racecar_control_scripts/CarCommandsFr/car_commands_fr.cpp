@@ -7,11 +7,6 @@
 CarCommandsFr::CarCommandsFr(ros::NodeHandle n)
 {
     node_handle_ = n;
-
-    node_handle_.getParam("/car_control/initial_speed", speed_);
-    node_handle_.getParam("/car_control/initial_turn", turn_);
-    direction_x_ = 1;
-    direction_y_ = 0;
 }
 
 void CarCommandsFr::prepare()
