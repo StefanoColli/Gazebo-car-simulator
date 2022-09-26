@@ -2,7 +2,7 @@
 
 #include "tf/tf.h"
 
-void trajectory_tracker::Prepare(void)
+void TrajectoryTracker::Prepare(void)
 {
     /* Retrieve parameters from ROS parameter server */
     std::string FullParamName;
@@ -60,7 +60,12 @@ void trajectory_tracker::Prepare(void)
 
     /* ROS topics */
     virtual_velocities_publisher = Handle.advertise<std_msgs::Float64MultiArray>("/virtual_velocities", 1);
-    odometry_subscriber = Handle.subscribe("/vesc/odom", 1, &trajectory_tracker::odometry_MessageCallback, this);
+    odometry_subscriber = Handle.subscribe("/vesc/odom", 1, &TrajectoryTracker::odometry_MessageCallback, this);
+    
+    // set up dynamic reconfiguration
+    f = boost::bind(&TrajectoryTracker::reconfigure_callback, this, _1, _2);
+    config_server.setCallback(f);
+    ROS_INFO("Dynamic reconfigure initialized");
 
     /* Initialize node state */
     RunPeriod = RUN_PERIOD_DEFAULT;
@@ -71,7 +76,7 @@ void trajectory_tracker::Prepare(void)
     ROS_INFO("Node %s ready to run.", ros::this_node::getName().c_str());
 }
 
-void trajectory_tracker::odometry_MessageCallback(const nav_msgs::Odometry::ConstPtr& msg)
+void TrajectoryTracker::odometry_MessageCallback(const nav_msgs::Odometry::ConstPtr& msg)
 {
     // Input odometry
 
@@ -95,13 +100,22 @@ void trajectory_tracker::odometry_MessageCallback(const nav_msgs::Odometry::Cons
     theta = yaw;
 }
 
-void trajectory_tracker::L_to_P(const double xlocal, const double ylocal, double &xP, double &yP)
+void TrajectoryTracker::reconfigure_callback(const trajectory_tracker::TrajTrackerConfig& config, uint32_t level)
+{
+    // update controller gains with values coming from the dynamic reconfigure server
+    Kp = config.Kp;
+    Ki = config.Ki;
+    FFWD = config.FFWD;
+    ROS_INFO("Changed local parameters: Kp = %f, Ki = %f, FFWD = %d!", Kp, Ki, FFWD);
+}
+
+void TrajectoryTracker::L_to_P(const double xlocal, const double ylocal, double &xP, double &yP)
 {
     xP = xlocal + PL_distance * std::cos(theta);
     yP = ylocal + PL_distance * std::sin(theta);
 }
 
-void trajectory_tracker::RunPeriodically(float Period)
+void TrajectoryTracker::RunPeriodically(float Period)
 {
     ros::Rate LoopRate(1.0/Period);
 
@@ -117,12 +131,12 @@ void trajectory_tracker::RunPeriodically(float Period)
     }
 }
 
-void trajectory_tracker::Shutdown(void)
+void TrajectoryTracker::Shutdown(void)
 {
     ROS_INFO("Node %s shutting down.", ros::this_node::getName().c_str());
 }
 
-void trajectory_tracker::PeriodicTask(void)
+void TrajectoryTracker::PeriodicTask(void)
 {
 
     /* Selected trajectory generation */
@@ -206,12 +220,12 @@ void trajectory_tracker::PeriodicTask(void)
     // update time
     t = t_new;
 
-    /* Publishing vehicle commands (msg->data[0] = t; 
-                                    msg->data[1] = velocity of point P along x direction; 
-                                    msg->data[2] = velocity of point P along y direction) */
+    /* Publishing vehicle commands (msg->data[0] = velocity of point P along x direction
+                                    msg->data[1] = velocity of point P along y direction)
+                                    msg->data[2] = t */
     std_msgs::Float64MultiArray msg;
-    msg.data.push_back(t);
     msg.data.push_back(vPx);
     msg.data.push_back(vPy);
+    msg.data.push_back(t);
     virtual_velocities_publisher.publish(msg);
 }

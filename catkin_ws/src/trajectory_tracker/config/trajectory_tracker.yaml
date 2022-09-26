@@ -1,5 +1,5 @@
 # Node configuration parameters
-  /trajectory_tracker/trajectory_type: 0       # Desired trajectory (0 = linear; 1 = parabolic; 2 = circular; 3 = eight shape; 4 = cycloidal)
+  /trajectory_tracker/trajectory_type: 2       # Desired trajectory (0 = linear; 1 = parabolic; 2 = circular; 3 = eight shape; 4 = cycloidal)
 
 # Linear trajectory parameters                     # The trajectory is parallel to the direction vector (a_coeff, b_coeff)
   /trajectory_tracker/a_coeff: 1.0              
@@ -22,7 +22,7 @@
 # Controller parameters
   /trajectory_tracker/Kp: 2.0                   # Proportional gain 
   /trajectory_tracker/Ki: 0.1                   # Integral gain
-  /trajectory_tracker/FFWD: 0                   # Use velocity feedforward (1 = feedforward used; 0 = feedforward NOT used)
+  /trajectory_tracker/FFWD: false                   # Use velocity feedforward (1 = feedforward used; 0 = feedforward NOT used)
 
 # Robot parameters
   /trajectory_tracker/PL_distance: 0.1          # Distance from the odometric centre of the robot to the selected point P

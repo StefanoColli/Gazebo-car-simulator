@@ -16,7 +16,7 @@ CarKinController::CarKinController(ros::NodeHandle n)
 
 void CarKinController::prepare()
 {
-    sub_input_velocity_ = node_handle_.subscribe("/robot_as_point_velocity", 1000, &CarKinController::inputVelocityCallback, this);
+    sub_input_velocity_ = node_handle_.subscribe("/virtual_velocities", 1000, &CarKinController::inputVelocityCallback, this);
     sub_odometry_ = node_handle_.subscribe("/vesc/odom", 1000, &CarKinController::odometryCallback, this);
     pub_command_ = node_handle_.advertise<ackermann_msgs::AckermannDriveStamped>("/vesc/ackermann_cmd_mux/input/teleop", 1000);
     
@@ -38,7 +38,7 @@ void CarKinController::shutDown()
 
 void CarKinController::linearize()
 {
-    constexpr double epsilon = 1; /**< Unknown param 'epsilon'... */
+    constexpr double epsilon = 0.1; /**< Unknown param 'epsilon'... */
 
     /** Compute new velocity absolute value. */
     new_front_wheel_speed_ = last_point_velocity_x_ * std::cos(last_yaw_) + last_point_velocity_y_ * std::sin(last_yaw_);

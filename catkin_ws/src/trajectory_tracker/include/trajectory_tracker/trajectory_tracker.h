@@ -4,14 +4,15 @@
 #include "ros/ros.h"
 #include <std_msgs/Float64MultiArray.h>
 #include <nav_msgs/Odometry.h>
+#include <dynamic_reconfigure/server.h>
+#include <trajectory_tracker/TrajTrackerConfig.h>
 
 #define RUN_PERIOD_DEFAULT 0.1
 /* Used only if the actual value of the period is not retrieved from the ROS parameter server */
 
 #define NAME_OF_THIS_NODE "trajectory_tracker"
 
-
-class trajectory_tracker
+class TrajectoryTracker
 {
   private: 
     ros::NodeHandle Handle;
@@ -19,6 +20,9 @@ class trajectory_tracker
     /* ROS topics */
     ros::Publisher virtual_velocities_publisher;
     ros::Subscriber odometry_subscriber;
+
+    dynamic_reconfigure::Server<trajectory_tracker::TrajTrackerConfig> config_server;
+    dynamic_reconfigure::Server<trajectory_tracker::TrajTrackerConfig>::CallbackType f;
 
     /* Parameters from ROS parameter server */
     int traj_type; // desired trajectory to follow
@@ -37,7 +41,7 @@ class trajectory_tracker
     double t; //current time
 
     /* Controller variables */
-    int FFWD; // feedforward flag (on/off)
+    bool FFWD; // feedforward flag (on/off)
     double Kp, Ki;  //proportional and integral gains
     double x_int_term, y_int_term;  //integral terms
 
@@ -65,6 +69,8 @@ class trajectory_tracker
     void Shutdown(void);
     
     void odometry_MessageCallback(const nav_msgs::Odometry::ConstPtr& msg);
+
+    void reconfigure_callback(const trajectory_tracker::TrajTrackerConfig& config, uint32_t level);
 
 };
 
