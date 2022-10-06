@@ -49,6 +49,9 @@ void TrajectoryTracker::Prepare(void)
     FullParamName = ros::this_node::getName()+"/Ki";
     if (false == Handle.getParam(FullParamName, Ki))
         ROS_ERROR("Node %s: unable to retrieve parameter %s.", ros::this_node::getName().c_str(), FullParamName.c_str());
+    FullParamName = ros::this_node::getName()+"/Kd";
+    if (false == Handle.getParam(FullParamName, Kd))
+        ROS_ERROR("Node %s: unable to retrieve parameter %s.", ros::this_node::getName().c_str(), FullParamName.c_str());
     FullParamName = ros::this_node::getName()+"/FFWD";
     if (false == Handle.getParam(FullParamName, FFWD))
         ROS_ERROR("Node %s: unable to retrieve parameter %s.", ros::this_node::getName().c_str(), FullParamName.c_str());
@@ -71,6 +74,7 @@ void TrajectoryTracker::Prepare(void)
     RunPeriod = RUN_PERIOD_DEFAULT;
     t = ros::Time::now().toSec();
     vPx = vPy = theta = 0.0;
+    prev_xP_error = prev_yP_error = 0.0;
     
 
     ROS_INFO("Node %s ready to run.", ros::this_node::getName().c_str());
@@ -105,6 +109,7 @@ void TrajectoryTracker::reconfigure_callback(const trajectory_tracker::TrajTrack
     // update controller gains with values coming from the dynamic reconfigure server
     Kp = config.Kp;
     Ki = config.Ki;
+    Kd = config.Kd;
     FFWD = config.FFWD;
     ROS_INFO("Changed local parameters: Kp = %f, Ki = %f, FFWD = %d!", Kp, Ki, FFWD);
 }
@@ -165,10 +170,10 @@ void TrajectoryTracker::PeriodicTask(void)
         case CIRCLE:
 
             // Circular trajectory computation
-            xref    = R*(std::cos(w*t)-1.0);
-            dxref   = -w*R*std::sin(w*t);
-            yref    = R*std::sin(w*t);
-            dyref   = w*R*std::cos(w*t);
+            xref    = R*(std::cos(W*t)-1.0);
+            dxref   = -W*R*std::sin(W*t);
+            yref    = R*std::sin(W*t);
+            dyref   = W*R*std::cos(W*t);
 
             break;
 
@@ -208,17 +213,28 @@ void TrajectoryTracker::PeriodicTask(void)
 
     // get current time
     double t_new = ros::Time::now().toSec();
+    double delta_t = t_new - t;
 
     // compute integral term
-    x_int_term += xP_error * (t_new - t);
-    y_int_term += yP_error * (t_new - t);
+    x_int_term += xP_error * delta_t;
+    y_int_term += yP_error * delta_t;
+
+    // compute derivative term
+    double x_der_term = (xP_error - prev_xP_error) / delta_t;
+    double y_der_term = (yP_error - prev_yP_error) / delta_t;
 
     // PI + FFWD controller 
-    vPx = FFWD * dxref + Kp * xP_error + Ki * x_int_term;
-    vPy = FFWD * dyref + Kp * yP_error + Ki * y_int_term;
+    vPx = FFWD * dxref + Kp * xP_error + Ki * x_int_term + Kd * x_der_term;
+    vPy = FFWD * dyref + Kp * yP_error + Ki * y_int_term + Kd * y_der_term;
+
+    ROS_INFO("Error = (%f,%f) - Speed = = (%f,%f)", xP_error, yP_error, vPx,vPy);
 
     // update time
     t = t_new;
+
+    // store last error
+    prev_xP_error = xP_error;
+    prev_yP_error = yP_error;
 
     /* Publishing vehicle commands (msg->data[0] = velocity of point P along x direction
                                     msg->data[1] = velocity of point P along y direction)

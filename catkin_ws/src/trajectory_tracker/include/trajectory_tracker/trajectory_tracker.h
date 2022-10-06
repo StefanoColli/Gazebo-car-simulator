@@ -39,10 +39,11 @@ class TrajectoryTracker
     double vPx, vPy; //computed virtual velocities for point P
     double xP, yP, theta; //virtual positions of P and orientation theta from the robot
     double t; //current time
+    double prev_xP_error, prev_yP_error; //error of the previous iteration
 
     /* Controller variables */
-    bool FFWD; // feedforward flag (on/off)
-    double Kp, Ki;  //proportional and integral gains
+    bool FFWD; //speed feedforward flag (on/off)
+    double Kp, Ki, Kd;  //proportional, integral and derivative gains
     double x_int_term, y_int_term;  //integral terms
 
     /* Node periodic task */
