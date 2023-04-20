@@ -18,7 +18,7 @@ void CarKinController::prepare()
 {
     sub_input_velocity_ = node_handle_.subscribe("/virtual_velocities", 1000, &CarKinController::inputVelocityCallback, this);
     sub_odometry_ = node_handle_.subscribe("/vesc/odom", 1000, &CarKinController::odometryCallback, this);
-    pub_command_ = node_handle_.advertise<ackermann_msgs::AckermannDriveStamped>("/vesc/ackermann_cmd_mux/input/teleop", 1000);
+    pub_command_ = node_handle_.advertise<ackermann_msgs::AckermannDriveStamped>("/vesc/ackermann_cmd_mux/input/navigation", 1000);
     
     ROS_ASSERT(sub_input_velocity_);
     ROS_ASSERT(sub_odometry_);
@@ -67,7 +67,7 @@ void CarKinController::sendCommand() const
     msg.drive.acceleration = 1;
     msg.drive.jerk = 1;
     msg.drive.steering_angle = new_steering_angle_;
-    msg.drive.steering_angle_velocity = new_steering_angle_velocity_;
+    msg.drive.steering_angle_velocity = 0; //new_steering_angle_velocity_;
 
     pub_command_.publish(msg);
 

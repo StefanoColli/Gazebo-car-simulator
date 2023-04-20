@@ -8,7 +8,7 @@ int main(int argc, char **argv)
    
   trajectory_tracker_node.Prepare();
   
-  trajectory_tracker_node.RunPeriodically(trajectory_tracker_node.RunPeriod);
+  trajectory_tracker_node.Run_periodically(trajectory_tracker_node.RunPeriod);
   
   trajectory_tracker_node.Shutdown();
   

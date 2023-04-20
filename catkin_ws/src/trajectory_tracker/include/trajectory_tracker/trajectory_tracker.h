@@ -33,13 +33,16 @@ class TrajectoryTracker
     double cycloid_radius; // cycloidal trajectory parameter
     double PL_distance; // distance from the center of the bicycle L to the selected point P (L and P are on the bicycle chassis line) 
 
+
     /* Node state variables */
     double xref, dxref, yref, dyref;  //trajectory of the robot frame origin
     double xPref, yPref; //virtual trajectory for point P
     double vPx, vPy; //computed virtual velocities for point P
     double xP, yP, theta; //virtual positions of P and orientation theta from the robot
-    double t; //current time
     double prev_xP_error, prev_yP_error; //error of the previous iteration
+    bool active = false; //if the controller is active or not (if active it starts trajectory tracking)
+    double t; //current time
+    double traj_starting_time; //trajectory time and trajectory starting time 
 
     /* Controller variables */
     bool FFWD; //speed feedforward flag (on/off)
@@ -47,9 +50,13 @@ class TrajectoryTracker
     double x_int_term, y_int_term;  //integral terms
 
     /* Node periodic task */
-    void PeriodicTask(void);
+    void Periodic_task(void);
     /* Convert coordinates from local robot frame into selected point P frame */ 
     void L_to_P(const double xlocal, const double ylocal, double &xP, double &yP);
+    /* Compute the coordinates of hte next setpoint for the trajectory chosen */
+    void Compute_trajectory_step();
+    /* Compute the control action as suitable virtual velocities */
+    void Control_law();
 
   public:
 
@@ -65,13 +72,13 @@ class TrajectoryTracker
 
     void Prepare(void);
     
-    void RunPeriodically(float Period);
+    void Run_periodically(float Period);
     
     void Shutdown(void);
     
-    void odometry_MessageCallback(const nav_msgs::Odometry::ConstPtr& msg);
+    void Odometry_message_callback(const nav_msgs::Odometry::ConstPtr& msg);
 
-    void reconfigure_callback(const trajectory_tracker::TrajTrackerConfig& config, uint32_t level);
+    void Reconfigure_callback(const trajectory_tracker::TrajTrackerConfig& config, uint32_t level);
 
 };
 

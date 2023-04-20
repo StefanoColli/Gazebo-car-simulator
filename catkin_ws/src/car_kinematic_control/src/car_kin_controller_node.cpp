@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "car_kin_controller_node");
     
-    constexpr double LOOP_RATE {3.0}; /**< loop rate in Hz */
+    constexpr double LOOP_RATE {100.0}; /**< loop rate in Hz */
     constexpr double LOOP_PERIOD {1 / LOOP_RATE}; /**< loop period in [s] */
 
     ros::NodeHandle node_handle;
