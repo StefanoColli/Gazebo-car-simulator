@@ -1,0 +1,2 @@
+#surface type configuration parameter
+/car_commands_friction_node/surface_type: 5 # Select surface type among 1:DRY, 2:WET, 3:SNOW, 4:ICE, 5:CUSTOM (parameters calculated with racecar values)
