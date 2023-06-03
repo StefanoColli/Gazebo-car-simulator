@@ -18,7 +18,7 @@ class TrajectoryTracker
     ros::NodeHandle Handle;
 
     /* ROS topics */
-    ros::Publisher virtual_velocities_publisher;
+    ros::Publisher virtual_velocities_publisher, reference_publisher;
     ros::Subscriber odometry_subscriber;
 
     dynamic_reconfigure::Server<trajectory_tracker::TrajTrackerConfig> config_server;

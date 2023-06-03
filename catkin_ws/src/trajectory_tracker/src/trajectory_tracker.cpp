@@ -63,6 +63,7 @@ void TrajectoryTracker::Prepare(void)
 
     /* ROS topics */
     virtual_velocities_publisher = Handle.advertise<std_msgs::Float64MultiArray>("/virtual_velocities", 1);
+    reference_publisher = Handle.advertise<std_msgs::Float64MultiArray>("/reference_trajectory", 1);
     odometry_subscriber = Handle.subscribe("/vesc/odom", 1, &TrajectoryTracker::Odometry_message_callback, this);
     
     // set up dynamic reconfiguration
@@ -84,7 +85,7 @@ void TrajectoryTracker::Odometry_message_callback(const nav_msgs::Odometry::Cons
 {
     // Input odometry
 
-    /*  we have to transorm the coordinate back to the P point */
+    /*  we have to transform the coordinate back to the P point */
     L_to_P(msg->pose.pose.position.x, msg->pose.pose.position.y, xP, yP);
 
     double roll = 0;
@@ -212,7 +213,7 @@ void TrajectoryTracker::Control_law()
     vPx = FFWD * dxref + Kp * xP_error + Ki * x_int_term + Kd * x_der_term;
     vPy = FFWD * dyref + Kp * yP_error + Ki * y_int_term + Kd * y_der_term;
 
-    ROS_INFO("Error = (%f,%f) - Speed = = (%f,%f)", xP_error, yP_error, vPx,vPy);
+    ROS_DEBUG("Error = (%f,%f) - Speed = (%f,%f)", xP_error, yP_error, vPx,vPy);
 
     // store last error
     prev_xP_error = xP_error;
@@ -255,14 +256,23 @@ void TrajectoryTracker::Periodic_task(void)
         // compute control action as virtual velocities
         Control_law();
 
-        /* Publishing vehicle commands (msg->data[0] = velocity of point P along x direction
-                                        msg->data[1] = velocity of point P along y direction)
-                                        msg->data[2] = t */
+        /* Publish vehicle commands (msg->data[0] = velocity of point P along x direction
+                                        msg->data[1] = velocity of point P along y direction
+                                        msg->data[2] = t )*/
         std_msgs::Float64MultiArray msg;
         msg.data.push_back(vPx);
         msg.data.push_back(vPy);
         msg.data.push_back(t);
         virtual_velocities_publisher.publish(msg);
+
+        /* Publish reference trajectory (msg_ref->data[0] = x reference
+                                        msg_ref->data[1] = y reference
+                                        msg->data[2] = t )*/
+        std_msgs::Float64MultiArray msg_ref;
+        msg_ref.data.push_back(xref);
+        msg_ref.data.push_back(yref);
+        msg_ref.data.push_back(t);
+        reference_publisher.publish(msg_ref);
     }
         
     // update time
