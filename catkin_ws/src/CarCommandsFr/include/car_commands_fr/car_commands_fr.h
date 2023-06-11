@@ -3,6 +3,7 @@
 
 #include "ros/ros.h"
 #include "ackermann_msgs/AckermannDriveStamped.h"
+#include <std_msgs/Float64MultiArray.h>
 
 /**
  * @class CarCommandsFr
@@ -87,6 +88,7 @@ private:
     ros::Publisher pub_acc_right_rear_wheel;
     ros::Publisher pub_acc_left_front_wheel;
     ros::Publisher pub_acc_right_front_wheel;
+    ros::Publisher pub_reference_speed;
     ros::Publisher pub_pos_left_steering_hinge;
     ros::Publisher pub_pos_right_steering_hinge;
 
@@ -99,6 +101,8 @@ private:
     double Cy;
     double D;
     double E;
+
+    double t; //current time
 
 };
 
