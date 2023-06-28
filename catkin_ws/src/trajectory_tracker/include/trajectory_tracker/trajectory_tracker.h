@@ -7,7 +7,7 @@
 #include <dynamic_reconfigure/server.h>
 #include <trajectory_tracker/TrajTrackerConfig.h>
 
-#define RUN_PERIOD_DEFAULT 0.1
+#define RUN_PERIOD_DEFAULT 0.01
 /* Used only if the actual value of the period is not retrieved from the ROS parameter server */
 
 #define NAME_OF_THIS_NODE "trajectory_tracker"
@@ -53,7 +53,7 @@ class TrajectoryTracker
     void Periodic_task(void);
     /* Convert coordinates from local robot frame into selected point P frame */ 
     void L_to_P(const double xlocal, const double ylocal, double &xP, double &yP);
-    /* Compute the coordinates of hte next setpoint for the trajectory chosen */
+    /* Compute the coordinates of the next setpoint for the trajectory chosen */
     void Compute_trajectory_step();
     /* Compute the control action as suitable virtual velocities */
     void Control_law();
@@ -68,16 +68,21 @@ class TrajectoryTracker
         CYCLOIDAL = 4
     } trajectory_type;
 
-    double RunPeriod;
+    double RunPeriod; // period of each loop iteration of the node
 
+    /* Acquire parameters, set up publishers and subscribers, set up dynamic reconfigure and initialize node attributes */
     void Prepare(void);
     
+    /* Node main function executed each iteration */
     void Run_periodically(float Period);
     
+    /* Function called on node exit */
     void Shutdown(void);
     
+    /* Callback for the odometry subscriber */
     void Odometry_message_callback(const nav_msgs::Odometry::ConstPtr& msg);
 
+    /* Callback for the dynamic reconfigure server*/
     void Reconfigure_callback(const trajectory_tracker::TrajTrackerConfig& config, uint32_t level);
 
 };

@@ -33,7 +33,7 @@ def ISE(df):
 if len(sys.argv) < 2:
     print("ERROR: No input bag file")
     exit(-1)
-bag_data = bagreader(sys.argv[1])
+bag_data = bagreader(sys.argv[1], tmp=True)
  
 #### Dataframes building and data preprocessing ####
 ref_traj_df = pd.read_csv(bag_data.message_by_topic('/reference_trajectory'))

@@ -3,4 +3,5 @@
   <node pkg="trajectory_tracker" type="trajectory_tracker_node" respawn="false" name="trajectory_tracker" output="screen">
     <rosparam file="$(find trajectory_tracker)/config/trajectory_tracker.yaml" command="load" />
   </node> 
+  <node pkg="rqt_reconfigure" type="rqt_reconfigure" name="gui_reconfigure" args="trajectory_tracker"/>
 </launch>

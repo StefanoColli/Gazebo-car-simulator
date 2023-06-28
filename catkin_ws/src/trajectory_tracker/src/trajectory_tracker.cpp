@@ -75,6 +75,7 @@ void TrajectoryTracker::Prepare(void)
     RunPeriod = 1/100.0f; //100Hz
     t = ros::Time::now().toSec();
     vPx = vPy = theta = 0.0;
+    x_int_term = y_int_term = 0.0;
     prev_xP_error = prev_yP_error = 0.0;
     
 

@@ -1,0 +1,7 @@
+<launch>
+    <include file="$(find car_kinematic_control)launch/car_kin_controller.launch"/>
+    <include file="$(find trajectory_tracker)launch/trajectory_tracker.launch"/> 
+
+     <!-- Record bag -->
+    <node name="bag_record" pkg="rosbag" type="record" args="record -O $(dirname)/out.bag --duration=1m /vesc/odom /reference_trajectory"/>
+</launch>
