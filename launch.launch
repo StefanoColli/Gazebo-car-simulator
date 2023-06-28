@@ -1,4 +1,5 @@
 <launch>
+    <include file="$(find racecar_gazebo)launch/racecar.launch"/>
     <include file="$(find car_kinematic_control)launch/car_kin_controller.launch"/>
     <include file="$(find trajectory_tracker)launch/trajectory_tracker.launch"/> 
 
