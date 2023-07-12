@@ -10,6 +10,10 @@ CarKinController::CarKinController(ros::NodeHandle n)
     ROS_ASSERT_MSG(n.hasParam("/car_kinematic_control/wheel_distance"), "YAML param does not exists.");
     node_handle_.getParam("/car_kinematic_control/wheel_distance", model_params_.L);
     if (model_params_.L < 0.0) throw new ros::InvalidParameterException("Wheel distance cannot be below 0.0");
+
+    ROS_ASSERT_MSG(n.hasParam("/car_kinematic_control/epsilon"), "YAML param does not exists.");
+    node_handle_.getParam("/car_kinematic_control/epsilon", model_params_.epsilon);
+    if (model_params_.epsilon < 0.0) throw new ros::InvalidParameterException("Distance from point P and COG cannot be below 0.0");
     
     node_handle_ = n;
 }
@@ -38,7 +42,7 @@ void CarKinController::shutDown()
 
 void CarKinController::linearize()
 {
-    constexpr double epsilon = 0.1; /**< Unknown param 'epsilon'... */
+    double epsilon = model_params_.epsilon;
 
     /** Compute new velocity absolute value. */
     new_front_wheel_speed_ = last_point_velocity_x_ * std::cos(last_yaw_) + last_point_velocity_y_ * std::sin(last_yaw_);

@@ -43,6 +43,7 @@ private:
     struct s_kin_model_params
     {
         double L {0.0}; /**< Distance between front and rear wheels. */
+        double epsilon {0.0}; /**< Distance between COG and a reference point P. */
     };
 
     /**
@@ -68,14 +69,14 @@ private:
      * 
      * These are the active input velocities.
      * 
-     * @param input_vel_msg
+     * @param input_vel_msg desired velocities received from Trajectory Tracker
      */
     void inputVelocityCallback(const std_msgs::Float64MultiArray::ConstPtr& input_vel_msg);
 
     /**
      * @brief Receive Odometry data (position, orientation and twist). Extract angular position of the car.
      * 
-     * @param odom_msg
+     * @param odom_msg contains information about Odometry received from Gazebo Model, such as current position and orientation.
      */
     void odometryCallback(const nav_msgs::Odometry::ConstPtr& odom_msg);
 
