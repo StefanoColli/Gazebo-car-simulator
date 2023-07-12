@@ -1,0 +1,22 @@
+# Simulator configuration parameters
+  /ode_simulator/tyre_model: 0                   # Tyre model (0, linear; 1, fiala with saturation; 2, fiala without saturation)
+
+  /ode_simulator/dt: 0.001                       # Integration step
+
+# Vehicle parameters
+  /ode_simulator/m: 5.5922                          # Vehicle mass
+  /ode_simulator/cog_a: 1.0                     # Distance of COG from front axle
+  /ode_simulator/cog_b: 1.0                     # Distance of COG from rear axle
+  /ode_simulator/mu: 1.0                       # Ground friction coefficient
+  /ode_simulator/Cf: 100.0                        # Front cornering stiffness
+  /ode_simulator/Cr: 244.0                       # Rear cornering stiffness
+  /ode_simulator/Iz: 0.030                       # Yaw moment of inertia
+
+
+# Vehicle initial state
+  /ode_simulator/r0: 0.0                         # Initial yaw rate
+  /ode_simulator/beta0: 0.0                      # Initial sideslip
+  /ode_simulator/x0: 0.0                         # Initial position x
+  /ode_simulator/y0: 0.0                         # Initial position y
+  /ode_simulator/psi0: 0.0                       # Initial heading
+  
