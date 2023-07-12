@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     {
         car_kin_linearizer.runPeriodically();
 
-        ROS_INFO("Running (count=%d);", count);
+        //ROS_INFO("Running (count=%d);", count);
 
         ros::spinOnce();
 
