@@ -1,2 +1,0 @@
-/car_kinematic_control/wheel_distance: 0.2
-/car_kinematic_control/epsilon: 0.1 # Distance between COG and a refrence point P
