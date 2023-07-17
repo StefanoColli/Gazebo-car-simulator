@@ -1,0 +1,8 @@
+prefix=/home/erica/catkin_ws/src/GazeboWheelSlipPlugin/build/devel
+
+Name: gazebo_plugins
+Description: Description of gazebo_plugins
+Version: 2.9.2
+Cflags: -I/home/erica/catkin_ws/src/GazeboWheelSlipPlugin/build/devel/include -I/home/erica/catkin_ws/src/GazeboWheelSlipPlugin/include
+Libs: -L${prefix}/lib -lgazebo_ros_utils -lgazebo_ros_template -lgazebo_ros_force -lgazebo_ros_joint_state_publisher -lgazebo_ros_joint_pose_trajectory -lgazebo_ros_diff_drive -lgazebo_ros_tricycle_drive -lgazebo_ros_skid_steer_drive -lgazebo_ros_planar_move -lgazebo_ros_range
+Requires: message_runtime gazebo_msgs roscpp rospy nodelet angles std_srvs geometry_msgs sensor_msgs nav_msgs urdf tf tf2_ros dynamic_reconfigure rosgraph_msgs trajectory_msgs image_transport rosconsole std_msgs visualization_msgs
