@@ -86,10 +86,10 @@ double CarCommandsFr::longitudinalSlip(const double speed, const double steer_an
 {
    //double w = speed*std::sin(steer_angle)/wheel_R; //Angular velocity
    double w = speed/wheel_R;
-   //if(speed > wheel_R*w)
+   if(speed > wheel_R*w)
    return (speed - wheel_R*w)/speed;
-   //else
-      //return (wheel_R*w - speed)/(wheel_R*w);
+   else
+      return (wheel_R*w - speed)/(wheel_R*w);
 }
 
 double CarCommandsFr::lateralSlip(const double speed, const double dir_x, const double dir_y)

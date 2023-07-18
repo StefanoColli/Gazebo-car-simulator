@@ -1,0 +1,2 @@
+/car_kinematic_linearizer/wheel_distance: 0.2
+/car_kinematic_linearizer/epsilon: 0.1 # Distance between COG and a refrence point P

@@ -1,0 +1,7 @@
+<launch>
+  <!--- Run ODE Simulator Node -->
+  <node pkg="ode_simulator" type="ode_simulator" respawn="false" name="ode_simulator" output="screen">
+    <rosparam file="$(find ode_simulator)/config/ode_simulator_params.yaml" command="load" />
+    <rosparam param="/use_sim_time">true</rosparam>
+  </node>
+</launch>

@@ -6,7 +6,7 @@ import pandas as pd
 import sys
 
 def Plot_2D_trajectory(ax, df):
-    ax.plot(df['x'], df['y'],label="Followed path", linewidth=0.7)
+    ax.plot(df['x'], df['y'],label="Followed path", linewidth=0.6)
     ax.plot(df['xref'], df['yref'],label="Reference path", linestyle=(0,(1,1)))
     
     ax.set_xlabel("x [m]")
@@ -44,7 +44,7 @@ def ISE(df):
 if len(sys.argv) < 2:
     print("ERROR: No input bag file")
     exit(-1)
-bag_data = bagreader(sys.argv[1], tmp = True)
+bag_data = bagreader(sys.argv[1])
  
 #### Dataframes building and data preprocessing ####
 ref_traj_df = pd.read_csv(bag_data.message_by_topic('/reference_trajectory'))
@@ -95,4 +95,5 @@ for i in range(2):
 #Finishing touches
 figManager = plt.get_current_fig_manager()
 figManager.window.showMaximized() #display maximized
+plt.tight_layout()
 plt.show()
