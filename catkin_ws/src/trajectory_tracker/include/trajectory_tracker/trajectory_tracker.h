@@ -27,10 +27,10 @@ class TrajectoryTracker
     /* Parameters from ROS parameter server */
     int traj_type; // desired trajectory to follow
     double a_coeff, b_coeff; // linear trajectory parameters
-    double parabola_convexity; // parabolic trajectory parameter
+    double focal_length; // parabolic trajectory parameter
     double R, W; // circular trajectory parameters
     double a, w; // eight-shape trajectory parameters 
-    double cycloid_radius; // cycloidal trajectory parameter
+    double cycloid_radius, cycloid_distance; // cycloidal trajectory parameter 
     double PL_distance; // distance from the center of the bicycle L to the selected point P (L and P are on the bicycle chassis line) 
 
 

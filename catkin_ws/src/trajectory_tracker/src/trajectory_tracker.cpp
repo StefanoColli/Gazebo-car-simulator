@@ -20,8 +20,8 @@ void TrajectoryTracker::Prepare(void)
     if (false == Handle.getParam(FullParamName, b_coeff))
         ROS_ERROR("Node %s: unable to retrieve parameter %s.", ros::this_node::getName().c_str(), FullParamName.c_str());
     // Parabolic trajectory parameter
-    FullParamName = ros::this_node::getName()+"/parabola_convexity";
-    if (false == Handle.getParam(FullParamName, parabola_convexity))
+    FullParamName = ros::this_node::getName()+"/focal_length";
+    if (false == Handle.getParam(FullParamName, focal_length))
         ROS_ERROR("Node %s: unable to retrieve parameter %s.", ros::this_node::getName().c_str(), FullParamName.c_str());
     // Circular trajectory parameters
     FullParamName = ros::this_node::getName()+"/R";
@@ -40,6 +40,9 @@ void TrajectoryTracker::Prepare(void)
     // Cycloidal trajectory parameter
     FullParamName = ros::this_node::getName()+"/cycloid_radius";
     if (false == Handle.getParam(FullParamName, cycloid_radius))
+        ROS_ERROR("Node %s: unable to retrieve parameter %s.", ros::this_node::getName().c_str(), FullParamName.c_str());
+    FullParamName = ros::this_node::getName()+"/cycloid_distance";
+    if (false == Handle.getParam(FullParamName, cycloid_distance))
         ROS_ERROR("Node %s: unable to retrieve parameter %s.", ros::this_node::getName().c_str(), FullParamName.c_str());
 
     // Controller parameters
@@ -147,20 +150,20 @@ void TrajectoryTracker::Compute_trajectory_step()
         case PARABOLIC:
 
             // Parabolic trajectory computation
-            xref    = traj_time;
-            dxref   = 1;
-            yref    = parabola_convexity * std::pow(std::cos(w*traj_time),2.0);
-            dyref   = 2 * parabola_convexity * traj_time;
+            xref    = 2 * focal_length * traj_time;
+            dxref   = 2 * focal_length;
+            yref    = focal_length * std::pow(traj_time,2.0);
+            dyref   = 2 * focal_length * traj_time;
 
             break;
 
         case CIRCLE:
 
             // Circular trajectory computation
-            xref    = R*std::cos(W*traj_time);
-            dxref   = -W*R*std::sin(W*traj_time);
-            yref    = R*std::sin(W*traj_time);
-            dyref   = W*R*std::cos(W*traj_time);
+            xref    = R*std::cos(W*traj_time - M_PI/2);
+            dxref   = -W*R*std::sin(W*traj_time - M_PI/2);
+            yref    = R*std::sin(W*traj_time - M_PI/2) + R;
+            dyref   = W*R*std::cos(W*traj_time - M_PI/2);
 
             break;
 
@@ -176,11 +179,11 @@ void TrajectoryTracker::Compute_trajectory_step()
 
         case CYCLOIDAL:
 
-            // Cycloidal trajectory computation
-            xref    = cycloid_radius * (traj_time - std::sin(traj_time));
-            dxref   = cycloid_radius - std::cos(traj_time);
-            yref    = cycloid_radius * (1 - std::cos(traj_time));
-            dyref   = std::sin(traj_time);
+            // Curtate cycloid trajectory computation
+            xref    = cycloid_radius * traj_time - cycloid_distance * std::sin(traj_time);
+            dxref   = cycloid_radius - cycloid_distance * std::cos(traj_time);
+            yref    = cycloid_distance * (1 - std::cos(traj_time));
+            dyref   = cycloid_distance * std::sin(traj_time);
 
             break;
 
