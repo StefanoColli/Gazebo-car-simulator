@@ -4,3 +4,6 @@
 /catkin_ws/src/CMakeLists.txt
 /catkin_ws/.catkin_workspace
 *.bag
+/Documentation/UserManual/*
+!/Documentation/UserManual/*.tex
+!/Documentation/UserManual/*.pdf
