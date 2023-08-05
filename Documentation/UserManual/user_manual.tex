@@ -20,6 +20,7 @@
 \usepackage{amssymb} % More symbols 
 \usepackage{multirow} % single table cell to span multiple rows
 \usepackage{xltabular} % for tables spanning multiple pages
+\usepackage{siunitx} % for units of measurement
 
 \usetikzlibrary{positioning}
 \usetikzlibrary{calc}
@@ -156,8 +157,11 @@ If there are no errors the user should be able to see the racecar in a Gazebo en
 	\end{tabularx}
 \end{center}
 
-\chapter{Original System Introduction}
+\newpage
+\chapter{MIT Racecar Model}
+\input{mit_racecar.tex}
 
+\newpage
 \chapter{(Our) System Description}
 
 \section{Scheme of the whole system}

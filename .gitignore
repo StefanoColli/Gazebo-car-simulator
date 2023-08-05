@@ -7,3 +7,4 @@
 /Documentation/UserManual/*
 !/Documentation/UserManual/*.tex
 !/Documentation/UserManual/*.pdf
+!/Documentation/UserManual/img/*
