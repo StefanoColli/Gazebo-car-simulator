@@ -113,7 +113,7 @@ namespace gazebo
     /// The Vector3.X value is the longitudinal slip in m/s,
     /// the Vector3.Y value is the lateral slip in m/s, and
     /// the Vector3.Z value is the product of radius and spin rate in m/s.
-    public: void GetSlips(std::map<std::string, ignition::math::Vector3d> &_out)
+    public: void GetSlips(std::map<std::string, ignition::math::Vector3d> &_out, double &_long_slip, double &_lat_slip)
             const;
 
     /// \brief Set unitless lateral slip compliance for all wheels.
@@ -142,7 +142,7 @@ namespace gazebo
     /// \param[in] _msg Slip compliance encoded as string.
     private: void OnLongitudinalCompliance(ConstGzStringPtr &_msg);
 
-    public: double MF_Force(const double _slip, const int _road, const int _XY, const int _FR);
+    public: double MF_Force(const double _slip, const int _road, const int _XY, const int _FR, const int LatLong);
 
     /// brief Get friction coefficients for each wheel
     /// \return Map of wheel name to a Vector2 of friction coefficients
@@ -168,6 +168,9 @@ namespace gazebo
 
     /// \brief Private data pointer.
     private: std::unique_ptr<wheel_slip_pacejka_private> data_ptr;
+    //private:
+	//double Cx, Cy, Bx, By, Dx, Dy, Ex, Ey;
+    //public: void set_Pacejka_Params(double _Cx, double _Cy, double _Bx, double _By, double _Dx, double _Dy, double _Ex, double _Ey);
   };
 }
 #endif

@@ -1,8 +1,0 @@
-\subsubsection usage Usage
-\verbatim
-<node name="wheel_slip_pacejka" pkg="gazebo_ros_wheel_slip" type="wheel_slip_pacejka">
-  <param name="slip_compliance_unitless_lateral" type="double" value="-1.0" />
-  <param name="slip_compliance_unitless_longitudinal" type="double" value="-1.0" />
-</node>
-\endverbatim
-

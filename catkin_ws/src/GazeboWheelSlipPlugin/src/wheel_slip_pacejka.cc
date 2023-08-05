@@ -3,8 +3,11 @@
 */
 #include <map>
 #include <mutex>
+#include <ros/ros.h>
 
 #include <ignition/common/Profiler.hh>
+
+#include <std_msgs/Float64.h>
 
 #include <gazebo/common/Assert.hh>
 #include <gazebo/common/CommonTypes.hh>
@@ -26,6 +29,7 @@
 #include <gazebo/transport/Publisher.hh>
 #include <gazebo/transport/Subscriber.hh>
 
+
 #include "../include/wheel_slip_pacejka.hh"
 
 namespace gazebo
@@ -40,6 +44,7 @@ namespace gazebo
 
   class wheel_slip_pacejka_private
   {
+
     public: class link_surface_params
     {
       /// \brief Pointer to wheel spin joint.
@@ -77,6 +82,10 @@ namespace gazebo
       public: double slip_compliance_longitudinal;
       
     };
+    public: ros::Publisher pub_long;
+    public: ros::Publisher pub_lat;
+    public: ros::Publisher pub_Fx;
+    public: ros::Publisher pub_Fy;
     public: double wheel_longitudinal_force;
     public: double wheel_lateral_force;
     public: double slip_lat;
@@ -150,6 +159,20 @@ void wheel_slip_pacejka::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   std::cout <<"LOADING"<<std::endl;
   GZ_ASSERT(_model, "wheel_slip_pacejka model pointer is NULL");
   GZ_ASSERT(_sdf, "wheel_slip_pacejka sdf pointer is NULL");
+  ros::NodeHandle nh;
+  this->data_ptr->pub_long = nh.advertise<std_msgs::Float64>("long_pub/right_front", 10);
+  this->data_ptr->pub_Fx = nh.advertise<std_msgs::Float64>("fx_pub/right_front", 10);
+  this->data_ptr->pub_lat = nh.advertise<std_msgs::Float64>("lat_pub/right_front", 10);
+  this->data_ptr->pub_Fy = nh.advertise<std_msgs::Float64>("fy_pub/right_front", 10);
+
+  /*Cx = 1.45;
+  Cy = 1.45;
+  Dx = 1;
+  Dy = 1.371;
+  Bx = 18;
+  Ex = -5;
+  By = 10;
+  Ey = 0.97;*/
 
   this->data_ptr->model = _model;
   auto world = _model->GetWorld();
@@ -371,11 +394,7 @@ physics::ModelPtr wheel_slip_pacejka::GetParentModel() const
 
 double wheel_slip_pacejka::longitudinalSlip(const double _speed, const double _spin_speed) const
 {
-   if(_speed != _speed || _spin_speed!=_spin_speed){
-        std::cout <<"HERE"<<std::endl;
-        return 0;
-   }
-   else if(_speed == 0.0 || _spin_speed == 0.0) return 0;
+   if(_speed != _speed || _spin_speed!=_spin_speed || ( _speed == 0.0)) return 0; //_spin_speed == 0.0 &&
    else{ 
 	double long_slip;
 	if(_speed > _spin_speed)
@@ -385,17 +404,17 @@ double wheel_slip_pacejka::longitudinalSlip(const double _speed, const double _s
 	{
 	   long_slip = (_spin_speed - _speed)/_spin_speed;
 	}
-	return long_slip;
+	return (_spin_speed - _speed)/_spin_speed;
    }
 }
 
 double wheel_slip_pacejka::lateralSlip(const double dir_x, const double dir_y) const
 {
-   double slip = 0;
+   double slip = 1;
    if(dir_x!=0.0 && dir_x==dir_x && dir_y==dir_y)
 	slip = -std::atan(dir_y/std::abs(dir_x));
    else{
-        std::cout <<"HERE"<<std::endl;
+        //std::cout <<"HERE"<<std::endl;
    }
 
    return slip;
@@ -403,7 +422,7 @@ double wheel_slip_pacejka::lateralSlip(const double dir_x, const double dir_y) c
 
 /////////////////////////////////////////////////
 void wheel_slip_pacejka::GetSlips(
-        std::map<std::string, ignition::math::Vector3d> &_out) const
+        std::map<std::string, ignition::math::Vector3d> &_out, double &_long_slip, double &_lat_slip) const
 {
   auto model = this->GetParentModel();
   if (!model)
@@ -446,8 +465,11 @@ void wheel_slip_pacejka::GetSlips(
     slip.Y(lateral_speed);
     slip.Z(spin_speed);
 
-    params.longitudinal_slip = this->longitudinalSlip(longitudinal_speed, spin_speed);
-    params.lateral_slip = this->lateralSlip(longitudinal_speed, lateral_speed);
+    //params.longitudinal_slip = this->longitudinalSlip(longitudinal_speed, spin_speed);
+    //params.lateral_slip = this->lateralSlip(longitudinal_speed, lateral_speed);
+    double sl_x = slip.X();
+    _long_slip = this->longitudinalSlip(longitudinal_speed, spin_speed);
+    _lat_slip = this->lateralSlip(longitudinal_speed, lateral_speed);
 
     auto name = link->GetName();
     _out[name] = slip;
@@ -536,22 +558,33 @@ void wheel_slip_pacejka::SetSlipComplianceLongitudinal(std::string _wheel_name, 
 	- Pacejka MF values*/
 
 }
-double wheel_slip_pacejka::MF_Force(const double _slip, const int _road, const int _XY, const int _FR)
+/*void wheel_slip_pacejka::set_Pacejka_Params(double _Cx, double _Cy, double _Bx, double _By, double _Dx, double _Dy, double _Ex, double _Ey)
+{
+   Cx = _Cx;
+   Cy = _Cy;
+   Bx = _Bx;
+   By = _By;
+   Dx = _Dx;
+   Dy = _Dy;
+   Ex = _Ex;
+   Ey = _Ey;
+}*/
+double wheel_slip_pacejka::MF_Force(const double _slip, const int _road, const int _XY, const int _FR, const int _LatLong)
 {
    double B;
    double C = 1.45;
-   double D;
+   double D = 1.371;
    double E;
 
    //_XY == 1 -> lateral Y , 0 -> longitudinal X
    //_FR == 1 -> rear , 0 -> front
-   if(!_XY && !_FR) D = 0.1;
-   else D = 1.371;
+   //if(!_XY && !_FR) D = 0.1;
+   //else D = 1.371;
 
    switch(_road){
 	case 1:
-		B = 10;
-		E = 0.97;
+		B = 20;
+		E = 1;
 		break;
 	case 2:
 		B = 12;
@@ -570,8 +603,24 @@ double wheel_slip_pacejka::MF_Force(const double _slip, const int _road, const i
 		throw std::invalid_argument("Unknown surface type");
 		break;
    }
-
-   double F = D*std::sin(C*(std::atan(B*_slip - E*(B*_slip - std::atan(B*_slip)))));
+   
+   double F;
+   double Cx = 1.45;
+   double Cy = 1.45;
+   double Dx = 1390*0.01371;
+   double Dy = 1.371;
+   double Bx = 3; //2
+   double Ex = 0.52;
+   double By = 10;
+   double Ey = 0.97;
+   //_latLong == 1 -> lateral
+   if(_LatLong == 1)
+	F = Dy*std::sin(Cy*(std::atan(By*_slip - Ey*(By*_slip - std::atan(By*_slip)))));
+   else
+   {
+        //X longitudinal
+        F = Dx*std::sin(Cx*(std::atan(Bx*_slip - Ex*(Bx*_slip - std::atan(Bx*_slip)))));
+   }
    return F;
 }
 
@@ -636,7 +685,9 @@ void wheel_slip_pacejka::Update()
   IGN_PROFILE_BEGIN("Update");
   // Get slip data so it can be published later
   std::map<std::string, ignition::math::Vector3d> slips;
-  this->GetSlips(slips);
+  double longitudinal_slip;
+  double lateral_slip;
+  this->GetSlips(slips, longitudinal_slip, lateral_slip);
 
   std::lock_guard<std::mutex> lock(this->data_ptr->mutex);
   for (const auto &link_surface : this->data_ptr->map_link_surface_params)
@@ -682,11 +733,11 @@ void wheel_slip_pacejka::Update()
       // so it is used for both slip directions.
       double speed = params.wheel_radius * std::abs(spin_angular_velocity);
 
-      this->data_ptr->wheel_longitudinal_force = this->MF_Force(params.longitudinal_slip, params.road, 0, params.front_rear); 
-      this->data_ptr->wheel_lateral_force = this->MF_Force(params.lateral_slip, params.road, 1, params.front_rear); 
+      this->data_ptr->wheel_longitudinal_force = this->MF_Force(longitudinal_slip, params.road, 0, params.front_rear, 0); 
+      this->data_ptr->wheel_lateral_force = this->MF_Force(lateral_slip, params.road, 1, params.front_rear, 1); 
 
-      this->data_ptr->slip_lat = params.lateral_slip/(this->data_ptr->wheel_lateral_force/force);
-      this->data_ptr->slip_long = params.longitudinal_slip/(this->data_ptr->wheel_longitudinal_force/force);
+      this->data_ptr->slip_lat = lateral_slip/(this->data_ptr->wheel_lateral_force/force);
+      this->data_ptr->slip_long = longitudinal_slip/(this->data_ptr->wheel_longitudinal_force/force);
       surface->slip1 = speed / force * this->data_ptr->slip_lat;
       surface->slip2 = speed / force * this->data_ptr->slip_long;
       //surface->slip1 = speed / force * params.slip_compliance_lateral;
@@ -702,6 +753,23 @@ void wheel_slip_pacejka::Update()
       if (params.slip_pub)
       {
         params.slip_pub->Publish(msg);
+      }
+      if(link->GetName() == "left_front_wheel")
+      {
+	std_msgs::Float64 msg_long;
+	std_msgs::Float64 msg_lat;
+	std_msgs::Float64 msg_Fx;
+	std_msgs::Float64 msg_Fy;
+ 
+	msg_long.data = longitudinal_slip;
+	msg_lat.data = lateral_slip;
+	msg_Fx.data = this->data_ptr->wheel_longitudinal_force;
+	msg_Fy.data = this->data_ptr->wheel_lateral_force;
+
+	this->data_ptr->pub_long.publish(msg_long);
+	this->data_ptr->pub_lat.publish(msg_lat);
+	this->data_ptr->pub_Fx.publish(msg_Fx);
+	this->data_ptr->pub_Fy.publish(msg_Fy);
       }
     }
   }

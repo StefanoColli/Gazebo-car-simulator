@@ -65,6 +65,7 @@ endif()
 
 generate_dynamic_reconfigure_options(
   cfg/WheelSlip.cfg
+  #cfg/WheelPacejka.cfg
 )
 
 include_directories(include

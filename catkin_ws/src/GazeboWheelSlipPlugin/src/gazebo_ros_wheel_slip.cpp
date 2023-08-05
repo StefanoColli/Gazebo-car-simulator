@@ -33,8 +33,7 @@ GazeboRosWheelSlip::~GazeboRosWheelSlip()
 }
 
 /////////////////////////////////////////////////
-void GazeboRosWheelSlip::configCallback(
-  gazebo_plugins::WheelSlipConfig &config, uint32_t /*level*/)
+void GazeboRosWheelSlip::configCallback(gazebo_plugins::WheelSlipConfig &config, uint32_t /*level*/)
 {
   if (config.slip_compliance_unitless_lateral >= 0)
   {
@@ -50,7 +49,32 @@ void GazeboRosWheelSlip::configCallback(
              config.slip_compliance_unitless_longitudinal);
     this->SetSlipComplianceLongitudinal(config.slip_compliance_unitless_longitudinal);
   }
+
+  /*Cx = config.Cx;
+  Cy = config.Cx;
+  Bx = config.Bx;
+  By = config.By;
+  Dx = config.Dx;
+  Dy = config.Dy;
+  Ex = config.Ex;
+  Ey = config.Ey; 
+  wheel_slip_pacejka::set_Pacejka_Params(Cx, Cy, Bx, By, Dx, Dy, Ex, Ey);
+*/
 }
+
+/*void GazeboRosWheelSlip::reconfig_callback(gazebo_ros_wheel_slip::WheelPacejkaConfig &config, uint32_t level)
+{
+  Cx = config.Cx;
+  Cy = config.Cx;
+  Bx = config.Bx;
+  By = config.By;
+  Dx = config.Dx;
+  Dy = config.Dy;
+  Ex = config.Ex;
+  Ey = config.Ey; 
+  wheel_slip_pacejka::set_Pacejka_Params(Cx, Cy, Bx, By, Dx, Dy, Ex, Ey);
+
+}*/
 
 /////////////////////////////////////////////////
 // Load the controller
@@ -94,6 +118,18 @@ void GazeboRosWheelSlip::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
   // Custom Callback Queue
   this->callbackQueueThread_ =
     boost::thread(boost::bind(&GazeboRosWheelSlip::QueueThread, this));
+
+  /*dyn_srv_pac_ =
+    new dynamic_reconfigure::Server<gazebo_ros_wheel_slip::WheelPacejkaConfig>
+    (*this->rosnode_);
+  dynamic_reconfigure::Server<gazebo_ros_wheel_slip::WheelPacejkaConfig>
+    ::CallbackType f_p =
+    boost::bind(&GazeboRosWheelSlip::reconfig_callback, this, _1, _2);
+  dyn_srv_pac_->setCallback(f_p);
+  // Custom Callback Queue
+  /*this->callbackQueueThread_ =
+    boost::thread(boost::bind(&GazeboRosWheelSlip::QueueThread, this));*/
+  ROS_INFO("Dynamic reconfigure initialized");
 }
 
 /////////////////////////////////////////////////

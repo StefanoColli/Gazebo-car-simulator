@@ -26,6 +26,7 @@
 
 // dynamic reconfigure stuff
 #include <gazebo_wheel_slip_plugin/WheelSlipConfig.h>
+//#include <gazebo_wheel_slip_plugin/WheelPacejkaConfig.h>
 #include <dynamic_reconfigure/server.h>
 
 #include <wheel_slip_pacejka.hh>
@@ -60,17 +61,19 @@ class GazeboRosWheelSlip : public wheel_slip_pacejka
     /// \brief Custom callback queue thread
     private: void QueueThread();
 
+    private: double Cx, Cy, Bx, By, Dx, Dy, Ex, Ey; 
+
     // Allow dynamic reconfiguration of wheel slip params
-    private: void configCallback(
-                    gazebo_plugins::WheelSlipConfig &config,
-                    uint32_t level);
+    private: void configCallback(gazebo_plugins::WheelSlipConfig &config, uint32_t level);
+    //private: void reconfig_callback(gazebo_ros_wheel_slip::WheelPacejkaConfig &config, uint32_t level);
 
     /// \brief pointer to ros node
     private: ros::NodeHandle *rosnode_;
 
     /// \brief Dynamic reconfigure server.
-    private: dynamic_reconfigure::Server<gazebo_plugins::WheelSlipConfig>
-                    *dyn_srv_;
+    private: dynamic_reconfigure::Server<gazebo_plugins::WheelSlipConfig> *dyn_srv_;
+
+    //private: dynamic_reconfigure::Server<gazebo_ros_wheel_slip::WheelPacejkaConfig> *dyn_srv_pac_;
 
     /// \brief for setting ROS name space
     private: std::string robotNamespace_;
