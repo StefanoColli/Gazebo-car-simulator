@@ -1,0 +1,7 @@
+/car_dynamic_linearizer/m: 5.5922 # Vehicle mass
+/car_dynamic_linearizer/Cf: 100.0 # Front cornering stiffness
+/car_dynamic_linearizer/Cr: 244.0 # Rear cornering stiffness
+/car_dynamic_linearizer/cog_a: 0.1 # Distance of COG from front axle
+/car_dynamic_linearizer/cog_b: 0.1 # Distance of COG from rear axle
+
+/car_dynamic_linearizer/epsilon: 0.1 # Distance between COG and a refrence point P
