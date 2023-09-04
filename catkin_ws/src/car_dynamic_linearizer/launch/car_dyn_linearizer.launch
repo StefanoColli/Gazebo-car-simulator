@@ -1,0 +1,7 @@
+<launch>
+    <env name="ROSCONSOLE_CONFIG_FILE" value="$(find car_dynamic_linearizer)/config/custom_rosconsole.conf"/>
+
+    <node name="car_dyn_linearizer_node" pkg="car_dynamic_linearizer" type="car_dyn_linearizer_node" respawn="false" output="screen" />
+
+    <rosparam file="$(find car_dynamic_linearizer)/config/car_params_conf.yaml" command="load" />
+</launch>

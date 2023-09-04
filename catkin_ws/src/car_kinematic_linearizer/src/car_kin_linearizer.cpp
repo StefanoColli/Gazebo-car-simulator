@@ -52,7 +52,14 @@ void CarKinLinearizer::linearize()
     /** Compute new steer angle. */
     const double num = last_point_velocity_y_ * std::cos(last_yaw_) - last_point_velocity_x_ * std::sin(last_yaw_);
     const double denom = last_point_velocity_x_ * std::cos(last_yaw_) + last_point_velocity_y_ * std::sin(last_yaw_);
-    new_steering_angle_ = std::atan( (model_params_.L / epsilon) * (num / denom) );
+    if (abs(denom) < DBL_EPSILON )
+    {
+        new_steering_angle_ = 0;
+    }
+    else
+    {
+        new_steering_angle_ = std::atan( (model_params_.L / epsilon) * (num / denom) );
+    }
     
     //ROS_DEBUG("num = %lf, denom = %lf, atan_arg = %lf, steering_angle = %lf", num, denom, (model_params_.L / epsilon) * (num / denom), steering_angle);
     

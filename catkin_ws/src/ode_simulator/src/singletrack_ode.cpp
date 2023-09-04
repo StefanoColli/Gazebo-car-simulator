@@ -69,8 +69,8 @@ void SingletrackODE::vehicle_ode(const state_type &state, state_type &dstate, do
     using namespace boost::math;
 
     // Handle zero velocity issue
-    if (std::abs(Vx)<=0.01) {
-        Vx = 0.01;
+    if (std::abs(Vx)<= DBL_EPSILON) {
+        Vx = 1e-8;
     }
 
     // Actual state

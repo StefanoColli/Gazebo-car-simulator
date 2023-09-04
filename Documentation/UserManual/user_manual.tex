@@ -152,10 +152,22 @@ If there are no errors the user should be able to see the racecar in a Gazebo en
 		\hline
 		trajectory\_tracker & Generates (or receives in input) a desired trajectory and actual car positions, than compute desired velocities to be sent to controllers. \\
 		\hline
-		CarCommandsFr & Interface used to replace inner wheel friction phisical model of ROS with a custom one. \\
+	\end{tabularx}
+\end{center}
+
+\subsection{Added Plugin}
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{
+			| >{\raggedright\arraybackslash}X
+			| >{\raggedright\arraybackslash}X |
+		}
+		\hline
+		GazeboRosWheelSlip & Plugin used to replace inner wheel friction phisical model of ROS with a custom one. \\
 		\hline
 	\end{tabularx}
 \end{center}
+
 
 \newpage
 \chapter{MIT Racecar Model}
@@ -516,20 +528,6 @@ There is another topic in which "trajectory tracker" publish, the \textit{/refer
 		\hline
 		\makecell[lt]{/vesc/low\_level/ \\ ackermann\_cmd\_mux/output} & xyz \\
 		\hline
-		\makecell[lt]{/racecar/ \\ left\_rear\_wheel \\ \_velocity\_controller/command} & xyz \\
-		\hline
-		\makecell[lt]{/racecar/ \\ right\_rear\_wheel \\ \_velocity\_controller/command} & xyz \\
-		\hline
-		\makecell[lt]{/racecar/ \\ left\_front\_wheel \\ \_velocity\_controller/command} & xyz \\
-		\hline
-		\makecell[lt]{/racecar/ \\ right\_front\_wheel \\ \_velocity\_controller/command} & xyz \\
-		\hline
-		\makecell[lt]{/reference\_speed} & xyz \\
-		\hline
-		\makecell[lt]{/racecar/ \\ left\_steering\_hinge \\ \_position\_controller/command} & xyz \\
-		\hline
-		\makecell[lt]{/racecar/ \\ right\_steering\_hinge \\ \_position\_controller/command} & xyz \\
-		\hline
 	\end{tabularx}
 \end{center}
 
@@ -726,91 +724,12 @@ Once the linearization is performed an \verb|AckermannDriveStamped| message is b
 \section{Package trajectoy\_tracker}
 \input{trajectory_tracker}
 
-\section{Package CarCommndsFr}
+\newpage
 
-\subsection{Intro}
+\section{Plugin GazeboWheelSlipPlugin}
+\input{pacejka_plugin}
 
-\subsection{Configuration}
-
-\begin{center}
-	\begin{tabularx}{\textwidth}{
-			| >{\raggedright\arraybackslash}X
-			| >{\arraybackslash}X |
-		}
-		\hline
-		\multicolumn{2}{|c|}{\textbf{Surface Parameters}} \\
-		\hline
-		surface\_type & Select surface type among 1:DRY, 2:WET, 3:SNOW, 4:ICE, 5:CUSTOM (parameters calculated with racecar values) \\
-		\hline
-	\end{tabularx}
-\end{center}
-
-\subsection{Launch}
-
-\subsection{Node car\_commands\_fr}
-
-\subsubsection{Compute surface type}
-
-Values are assigned to coefficients depending on the chosen ground type.
-
-\begin{center}
-	\begin{tabularx}{\textwidth}{|X|X|X|X|X|X|X|}
-		\hline
-		 & $B_x$ & $B_y$ & $C_x$ & $C_y$ & $D$ & $E$ \\
-		\hline
-		Dry & 10 & 10 & 1.9 & 1.9 & 1 & 0.97 \\
-		\hline
-		Wet & 12 & 12 & 2.3 & 2.3 & 0.82 & 1 \\
-		\hline
-		Snow & 5 & 5 & 2 & 2 & 0.3 & 1 \\
-		\hline
-		Ice & 4 & 4 & 2 & 2 & 0.1 & 1 \\
-		\hline
-		Custom & 0.21 & 0.017 & 1.65 & 1.3 & -548 & 0.2 \\
-		\hline
-	\end{tabularx}
-\end{center}
-
-\subsubsection{Compute desired speed}
-
-$S$ = slip
-
-$V$ = |speed|
-
-$R_w$ = wheel radius 
-
-$M$ = mass
-
-Longitudinal Slip
-\[
-\omega = \frac{V}{R_w}
-\]
-\textcolor{red}{Sempre 0?}
-\[
-S_{long} = \frac{V - R_w\omega}{V}
-\]
-Lateral Slip
-\[
-S_{lat} = \arctan\left(\frac{V_y}{V_x}\right)
-\]
-Acceleration
-
-Pacejka Magic Formula
-\[
-y(x) = D\sin\{C\arctan[Bx - E(Bx - \arctan(Bx))]\}
-\]
-\[
-a_{long} = \frac{y(S_{long})}{M}
-\]
-\[
-a_{lat} = \frac{y(S_{lat})}{M}
-\]
-\[
-a = \sqrt[2]{a_{long}^2 + a_{lat}^2}
-\]
-\[
-V_{desired} = \frac{\left(V + a\left(\frac{1}{100}\right)\right)}{0.1}
-\]
+\newpage
 
 \appendix
 

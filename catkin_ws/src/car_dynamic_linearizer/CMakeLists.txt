@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(car_control)
+project(car_dynamic_linearizer)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -109,7 +109,7 @@ roslaunch_add_file_check(launch) # added: for roslaunch
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES car_control car_commands car_odometry_reader
+  LIBRARIES car_dyn_linearizer car_commands car_odometry_reader
   CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
@@ -140,9 +140,8 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/car_control_node.cpp)
-add_executable(car_commands_node src/car_commands_node.cpp src/car_commands.cpp)
+add_executable(car_dyn_linearizer_node src/car_dyn_linearizer_node.cpp src/car_dyn_linearizer.cpp)
 add_executable(car_odometry_reader_node src/car_odometry_reader_node.cpp src/car_odometry_reader.cpp)
-add_executable(car_controller src/car_controller_node.cpp src/car_controller.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -158,9 +157,8 @@ add_executable(car_controller src/car_controller_node.cpp src/car_controller.cpp
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
-target_link_libraries(car_commands_node ${catkin_LIBRARIES})
+target_link_libraries(car_dyn_linearizer_node ${catkin_LIBRARIES})
 target_link_libraries(car_odometry_reader_node ${catkin_LIBRARIES})
-target_link_libraries(car_controller ${catkin_LIBRARIES})
 
 #############
 ## Install ##
