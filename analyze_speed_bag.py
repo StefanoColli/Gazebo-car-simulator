@@ -14,13 +14,22 @@ def Plot_2D_trajectory(ax, df):
     ax.set_title("Car Trajectory")
     ax.legend(title="Paths")
 
-def Plot_2D_Speed(ax, df):
-    ax.plot(df['Time'], df['sref'],label="Speed", linewidth=0.7)
-    ax.plot(df['Time'], df['sact'],label="Modified speed", linestyle=(0,(1,1)))
+def Plot_2D_Fx(ax, df):
+    ax.plot(df['long_slip'], df['Fx'], linewidth=0.7)
+    #ax.plot(df['Fx'],label="Fx", linestyle=(0,(1,1)))
     
-    ax.set_xlabel("t [s]")
-    ax.set_ylabel("speed [m/s]")
-    ax.set_title("Car Speed")
+    ax.set_xlabel("Longitudinal_slip")
+    ax.set_ylabel("Fx")
+    ax.set_title("Fx")
+    ax.legend(title="Paths")
+
+def Plot_2D_Fy(ax, df):
+    ax.plot(df['lat_slip'], df['Fy'], linewidth=0.7)
+    #ax.plot(df['Time'], df['Fy'],label="Fy", linestyle=(0,(1,1)))
+    
+    ax.set_xlabel("Lateral_slip")
+    ax.set_ylabel("Fy")
+    ax.set_title("Fy")
     ax.legend(title="Paths")
 
 def Plot_dim_wrt_time(ax, df, dimension):
@@ -55,15 +64,26 @@ odometry_df = pd.read_csv(bag_data.message_by_topic('/vesc/odom'))
 odometry_df = odometry_df[['Time', 'pose.pose.position.x', 'pose.pose.position.y']]
 odometry_df = odometry_df.rename(columns={'pose.pose.position.x':'x', 'pose.pose.position.y':'y'})
 
-ref_speed_df = pd.read_csv(bag_data.message_by_topic('/reference_speed')) #desired speed
-ref_speed_df = ref_speed_df[['Time', 'data_0', 'data_1']]
-ref_speed_df = ref_speed_df.rename(columns={'data_0':'sref', 'data_1':'sact'})
+ref_long_sl = pd.read_csv(bag_data.message_by_topic('/long_pub/right_front')) 
+ref_long_sl = ref_long_sl[['Time', 'data']]
+ref_long_sl = ref_long_sl.rename(columns={'data':'long_slip'})
+ref_lat_sl = pd.read_csv(bag_data.message_by_topic('/lat_pub/right_front')) 
+ref_lat_sl = ref_lat_sl[['Time', 'data']]
+ref_lat_sl = ref_lat_sl.rename(columns={'data':'lat_slip'})
+ref_fx = pd.read_csv(bag_data.message_by_topic('/fx_pub/right_front')) 
+ref_fx = ref_fx[['Time', 'data']]
+ref_fx = ref_fx.rename(columns={'data':'Fx'})
+ref_fy = pd.read_csv(bag_data.message_by_topic('/fy_pub/right_front')) 
+ref_fy = ref_fy[['Time', 'data']]
+ref_fy = ref_fy.rename(columns={'data':'Fy'})
+
 
 # odometry messages are published at 20Hz while trajectory setpoints are published at 100Hz,
 # thus we merge the two dataframes with a left join (where odometry is the left df) on Time  
 
 aligned_df = pd.merge_asof(odometry_df, ref_traj_df, on='Time', direction='nearest')
-aligned_df = pd.merge_asof(aligned_df, ref_speed_df, on='Time', direction='nearest')
+aligned_x = pd.merge_asof(ref_long_sl, ref_fx, on='Time', direction='nearest')
+aligned_y = pd.merge_asof(ref_lat_sl, ref_fy, on='Time', direction='nearest')
 
 #### Compute RMSE and ISE ####
 rmse = RMSE(aligned_df)
@@ -72,15 +92,18 @@ ise = ISE(aligned_df)
 #### Plotting ####
 #create figure with 2x3 grid
 fig = plt.figure(sys.argv[1] + " Analisys")
-gs = fig.add_gridspec(2,2)
+gs = fig.add_gridspec(3,2)
 
 #Big plot of the trajectory
 ax_big = fig.add_subplot(gs[0,0])
 Plot_2D_trajectory(ax_big, aligned_df)
 
 #Big plot of the speed
-ax_s = fig.add_subplot(gs[1,0])
-Plot_2D_Speed(ax_s, aligned_df)
+ax_x = fig.add_subplot(gs[1,0])
+Plot_2D_Fx(ax_x, aligned_x)
+
+ax_y = fig.add_subplot(gs[2,0])
+Plot_2D_Fy(ax_y, aligned_y)
 
 #Little textbox with rmse and ise
 text = f"RMSE = {rmse:.4f}\nISE = {ise:.4f}"
