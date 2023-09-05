@@ -6,7 +6,7 @@
 #include <gazebo/physics/Model.hh>
 #include <sdf/sdf.hh>
 
-#include "../include/gazebo_ros_wheel_slip.h"
+#include "../include/gazebo_ros_pacejka.h"
 
 namespace gazebo
 {

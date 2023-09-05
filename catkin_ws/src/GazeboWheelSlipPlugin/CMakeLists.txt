@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.1)
-project(gazebo_wheel_slip_plugin)
+project(gazebo_wheel_pacejka)
 
 find_package(gazebo REQUIRED)
 find_package(ignition-common3 QUIET REQUIRED COMPONENTS profiler)
@@ -118,18 +118,18 @@ add_dependencies(${PROJECT_NAME}_gencfg ${catkin_EXPORTED_TARGETS})
 ## Plugins
 
 if (NOT GAZEBO_VERSION VERSION_LESS 9.5)
-  add_library(gazebo_ros_wheel_slip src/gazebo_ros_wheel_slip.cpp src/wheel_slip_pacejka.cc)
+  add_library(gazebo_ros_pacejka src/gazebo_ros_pacejka.cpp src/wheel_slip_pacejka.cc)
 
-  add_dependencies(gazebo_ros_wheel_slip ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencfg)
-  target_link_libraries(gazebo_ros_wheel_slip
+  add_dependencies(gazebo_ros_pacejka ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencfg)
+  target_link_libraries(gazebo_ros_pacejka
     ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
-  target_link_libraries(gazebo_ros_wheel_slip ignition-common3::profiler)
+  target_link_libraries(gazebo_ros_pacejka ignition-common3::profiler)
 endif()
 
 
 if (NOT GAZEBO_VERSION VERSION_LESS 9.5)
-  install(TARGETS gazebo_ros_wheel_slip
+  install(TARGETS gazebo_ros_pacejka
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     )

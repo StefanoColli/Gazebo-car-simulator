@@ -1,7 +1,0 @@
-<?xml version='1.0'?>
-
-<launch>
-    <node name="car_commands_friction_node" pkg="car_commands_fr" type="car_commands_fr_node" respawn="false" output="screen">
-    	<rosparam file="$(find car_commands_fr)/config/car_commands_fr.yaml" command="load"/>
-    </node>
-</launch>
