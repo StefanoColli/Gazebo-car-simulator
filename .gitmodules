@@ -1,6 +1,8 @@
 [submodule "catkin_ws/src/mit_racecar/racecar"]
 	path = catkin_ws/src/mit_racecar/racecar
 	url = https://github.com/StefanoColli/racecar
+	branch = master
 [submodule "catkin_ws/src/mit_racecar/racecar_gazebo"]
 	path = catkin_ws/src/mit_racecar/racecar_gazebo
 	url = https://github.com/StefanoColli/racecar_gazebo
+	branch = master

@@ -394,14 +394,24 @@ physics::ModelPtr wheel_slip_pacejka::GetParentModel() const
 
 double wheel_slip_pacejka::longitudinalSlip(const double _speed, const double _spin_speed) const
 {
-   if(_speed != _speed || _spin_speed!=_spin_speed || ( _speed == 0.0)) return 0; //_spin_speed == 0.0 &&
+   if( isnan(_speed) || isnan(_spin_speed)) return 1e-5; //_spin_speed == 0.0 &&
    else{ 
 	double long_slip;
 	if(_speed > _spin_speed)
 	{
+    if (abs(_speed) <= DBL_EPSILON)
+    {
+      return DBL_MIN;
+    }
+    
 	   long_slip = (_speed - _spin_speed)/_speed;
 	}else
 	{
+    if ( abs(_spin_speed) <= DBL_EPSILON)
+    {
+      return DBL_MAX;
+    }
+    
 	   long_slip = (_spin_speed - _speed)/_spin_speed;
 	}
 	return (_spin_speed - _speed)/_spin_speed;
@@ -411,8 +421,8 @@ double wheel_slip_pacejka::longitudinalSlip(const double _speed, const double _s
 double wheel_slip_pacejka::lateralSlip(const double dir_x, const double dir_y) const
 {
    double slip = 1;
-   if(dir_x!=0.0 && dir_x==dir_x && dir_y==dir_y)
-	slip = -std::atan(dir_y/std::abs(dir_x));
+   if(abs(dir_x) >= DBL_EPSILON && !isnan(dir_x) && !isnan(dir_y))
+	    slip = -std::atan(dir_y/std::abs(dir_x));
    else{
         //std::cout <<"HERE"<<std::endl;
    }
@@ -736,10 +746,22 @@ void wheel_slip_pacejka::Update()
       this->data_ptr->wheel_longitudinal_force = this->MF_Force(longitudinal_slip, params.road, 0, params.front_rear, 0); 
       this->data_ptr->wheel_lateral_force = this->MF_Force(lateral_slip, params.road, 1, params.front_rear, 1); 
 
-      this->data_ptr->slip_lat = lateral_slip/(this->data_ptr->wheel_lateral_force/force);
-      this->data_ptr->slip_long = longitudinal_slip/(this->data_ptr->wheel_longitudinal_force/force);
-      surface->slip1 = speed / force * this->data_ptr->slip_lat;
-      surface->slip2 = speed / force * this->data_ptr->slip_long;
+      //if (abs(force) <= DBL_EPSILON)
+      //{
+      //  this->data_ptr->slip_lat = 0;
+      //  this->data_ptr->slip_long = 0;
+      //  surface->slip1 = 0;
+      //  surface->slip2 = 0;
+      //}
+      //else
+      //{
+        this->data_ptr->slip_lat = lateral_slip/(this->data_ptr->wheel_lateral_force/force);
+        this->data_ptr->slip_long = longitudinal_slip/(this->data_ptr->wheel_longitudinal_force/force);
+        surface->slip1 = speed / force * this->data_ptr->slip_lat;
+        surface->slip2 = speed / force * this->data_ptr->slip_long;
+      //}
+      
+      
       //surface->slip1 = speed / force * params.slip_compliance_lateral;
       //surface->slip2 = speed / force * params.slip_compliance_lateral;
     }
