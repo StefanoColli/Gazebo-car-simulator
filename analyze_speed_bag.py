@@ -15,7 +15,7 @@ def Plot_2D_trajectory(ax, df):
     ax.legend(title="Paths")
 
 def Plot_2D_Fx(ax, df):
-    ax.plot(df['long_slip'], df['Fx'], linewidth=0.7)
+    ax.scatter(df['long_slip'], df['Fx'], s=2)
     #ax.plot(df['Fx'],label="Fx", linestyle=(0,(1,1)))
     
     ax.set_xlabel("Longitudinal_slip")
@@ -24,7 +24,7 @@ def Plot_2D_Fx(ax, df):
     ax.legend(title="Paths")
 
 def Plot_2D_Fy(ax, df):
-    ax.plot(df['lat_slip'], df['Fy'], linewidth=0.7)
+    ax.scatter(df['lat_slip'], df['Fy'], s=0.3)
     #ax.plot(df['Time'], df['Fy'],label="Fy", linestyle=(0,(1,1)))
     
     ax.set_xlabel("Lateral_slip")
@@ -53,7 +53,7 @@ def ISE(df):
 if len(sys.argv) < 2:
     print("ERROR: No input bag file")
     exit(-1)
-bag_data = bagreader(sys.argv[1])
+bag_data = bagreader(sys.argv[1], tmp=True)
  
 #### Dataframes building and data preprocessing ####
 ref_traj_df = pd.read_csv(bag_data.message_by_topic('/reference_trajectory'))
