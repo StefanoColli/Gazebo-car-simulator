@@ -156,7 +156,6 @@ void wheel_slip_pacejka::Fini()
 /////////////////////////////////////////////////
 void wheel_slip_pacejka::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
-  std::cout <<"LOADING"<<std::endl;
   GZ_ASSERT(_model, "wheel_slip_pacejka model pointer is NULL");
   GZ_ASSERT(_sdf, "wheel_slip_pacejka sdf pointer is NULL");
   ros::NodeHandle nh;

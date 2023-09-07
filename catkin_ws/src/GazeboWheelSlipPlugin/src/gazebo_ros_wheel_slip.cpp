@@ -80,7 +80,6 @@ void GazeboRosWheelSlip::configCallback(gazebo_plugins::WheelSlipConfig &config,
 // Load the controller
 void GazeboRosWheelSlip::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 {
-  std::cout <<"gazebo wheel_slip_plugin LOADING"<<std::endl;
   // Load the plugin
   wheel_slip_pacejka::Load(_parent, _sdf);
   
