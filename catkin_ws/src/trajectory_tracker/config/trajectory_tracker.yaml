@@ -1,5 +1,5 @@
 # Node configuration parameters
-  /trajectory_tracker/trajectory_type: 3        # Desired trajectory (0 = linear; 1 = parabolic; 2 = circular; 3 = eight shape; 4 = cycloidal)
+  /trajectory_tracker/trajectory_type: 0        # Desired trajectory (0 = linear; 1 = parabolic; 2 = circular; 3 = eight shape; 4 = cycloidal)
 
 # Linear trajectory parameters                  # The trajectory is parallel to the direction vector (a_coeff, b_coeff)
   /trajectory_tracker/a_coeff: 1.0              
