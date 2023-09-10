@@ -39,6 +39,9 @@ namespace gazebo
   /// parameter specified below in order to match the units of the ODE
   /// slip parameters.
   ///
+  /// ( Other resource : https://osrf-migration.github.io/gazebo-gh-pages/#!/osrf/gazebo/pull-requests/2950/page/1 )
+  /// ( Other resource : http://code.eng.buffalo.edu/dat/sites/tire/tire.html )
+  ///
   /// A graphical interpretation of these parameters is provided below
   /// for a positive value of slip compliance.
   /// The horizontal axis corresponds to the slip ratio at the wheel,
