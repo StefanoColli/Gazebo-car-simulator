@@ -1,0 +1,65 @@
+We developed two python scripts that plot useful graphs to quickly visualize the system performance, and 
+that compute error metrics to objectively compare different test instances. 
+\subsection{Metrics}
+Let $\vec{q(t)}=\begin{bmatrix} x(t) \\ y(t) \end{bmatrix}$ be the position of the robot center of mass in global coordinates at 
+time t, and $\vec{q_{ref}(t)}=\begin{bmatrix} x_{ref}(t) \\ y_{ref}(t) \end{bmatrix}$ be its target position at time t, we define
+the error vector $\vec{e}$ at time t as:
+\[
+    \vec{e(t)} = \begin{bmatrix} x(t) - x_{ref}(t) \\ y(t) - y_{ref}(t) \end{bmatrix}
+\] 
+We neglect the heading $\theta$ in the error computation since, having used the feedback linearization law to control
+the system, we have a loss of observability: we no longer can control the robot heading; however, we know that, starting
+from any initial condition, the car will automatically align itself with the desired trajectory. \\
+To quantify the controlled system performance we chose the following two indicators:
+\begin{itemize}
+    \item Root Mean Square Error (RMSE) which is computed as the square root of the mean square error:
+    \[
+        RMSE = \sqrt{\frac{1}{T} \sum_{t=0}^{T}\vec{e(t)}^\intercal\vec{e(t)}}
+    \] 
+    It is a measure of the mean error that we have at each time instant;
+    \item Integral Square Error (ISE) which is computed as the integration over the entire trajectory time T of the square
+    of the error:
+    \[
+        ISE = \int_{T}^{} \vec{e(t)}^\intercal\vec{e(t)}\,dt
+    \] 
+    It is a measure of the total error accumulated over the entire trajectory.
+\end{itemize}
+
+\subsection{Graphs}
+\textit{analyze\_bag.py} script plots three graphs:
+\begin{itemize}
+    \item  a 2D representation of the robots center of mass trajectory (continuous blue line) together with the 
+    desired trajectory (dotted orange line);
+    \item actual and desired center of mass trajectory along x-axis over time;
+    \item actual and desired center of mass trajectory along y-axis over time.
+\end{itemize}
+When using Pacejka tire-ground interaction model, we can use \textit{analyze\_speed\_bag.py} script that draws the three
+aforementioned plots plus two more:
+\begin{itemize}
+    \item the longitudinal force $F_x$ acting on the wheel contact point with respect to the longitudinal slip;
+    \item the lateral force $F_y$ acting on the wheel contact point with respect to the lateral slip.
+\end{itemize}
+
+\subsection{Scripts usage}
+The typical use case of the python scripts is to, first, record a ROS bag during the simulation; it can be done using command:
+\begin{lstlisting}[language=bash]
+    $ rosbag record -O out.bag --duration=1m /vesc/odom
+        /reference_trajectory
+\end{lstlisting}
+Or, if we are using Pacejka tire-ground interaction model, we need to record additional data with the following:
+\begin{lstlisting}[language=bash,  label={pacejka}]
+    $ rosbag record -O out.bag --duration=1m /vesc/odom 
+        /reference_trajectory /long_pub/right_front 
+        /lat_pub/right_front /fx_pub/right_front
+        /fy_pub/right_front
+\end{lstlisting}
+Then, we can simply launch the desired python script passing the bag file as parameter:
+\begin{lstlisting}[language=bash]
+    $ python3 analyze_bag.py -O out.bag
+\end{lstlisting}
+or 
+\begin{lstlisting}[language=bash]
+    $ python3 analyze_speed_bag.py -O out.bag
+\end{lstlisting}
+Please note that in order to use \textit{analyze\_speed\_bag.py}, the bag file must have been recorded using the command
+\hyperref[pacejka]{above}.

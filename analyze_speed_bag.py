@@ -15,13 +15,12 @@ def Plot_2D_trajectory(ax, df):
     ax.legend(title="Paths")
 
 def Plot_2D_Fx(ax, df):
-    ax.scatter(df['long_slip'], df['Fx'], s=2)
+    ax.scatter(df['long_slip'], df['Fx'], s=0.3)
     #ax.plot(df['Fx'],label="Fx", linestyle=(0,(1,1)))
     
     ax.set_xlabel("Longitudinal_slip")
     ax.set_ylabel("Fx")
     ax.set_title("Fx")
-    ax.legend(title="Paths")
 
 def Plot_2D_Fy(ax, df):
     ax.scatter(df['lat_slip'], df['Fy'], s=0.3)
@@ -30,7 +29,6 @@ def Plot_2D_Fy(ax, df):
     ax.set_xlabel("Lateral_slip")
     ax.set_ylabel("Fy")
     ax.set_title("Fy")
-    ax.legend(title="Paths")
 
 def Plot_dim_wrt_time(ax, df, dimension):
     ax.plot(df['Time'], df[dimension],label="Followed path", linewidth=0.7)

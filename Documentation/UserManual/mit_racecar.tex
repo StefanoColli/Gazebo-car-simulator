@@ -358,8 +358,11 @@ the former are attached to the steering hinges, while the latter are directly co
 Right and left steering hinges are connected to the chassis through two revolute joints. \\
 Because of the joints nature, the range of motion is limited between a minimum and a maximum angle:
 in this case, \SI{-1.0}{\radian} and \SI{1.0}{\radian}.
-The effort limit is \SI[inter-unit-product =\ensuremath{\cdot}]{10}{\newton\metre}, and the velocity limit is 
-\SI[per-mode = symbol]{100}{\radian \per \second}.
+Originally, the effort limit was set to \SI[inter-unit-product =\ensuremath{\cdot}]{10}{\newton\metre} in order to simulate
+a realistic steering dynamics. Since the feedback linearization law we used required to have an instantaneous steering 
+mechanism, we increased such parameter to \SI[inter-unit-product =\ensuremath{\cdot}]{1000}{\newton\metre}, drastically 
+reducing the steering time. \\
+Finally, the velocity limit is \SI[per-mode = symbol]{100}{\radian \per \second}.
 
 \subsubsection{Hokuyo laser Joint}
 The laser sensor is attached to the chassis by a fixed joint, thus all its degrees of freedom are locked. This type 
@@ -368,27 +371,6 @@ of joint does not require to specify any additional information apart from the p
 \subsubsection{ZED camera joint}
 In a similar way as the laser sensor, the camera is connected to the chassis through a fixed joint.
 Because of that, only the position, the parent and child connections are specified.
-
-\subsection{Ackermann steering model}
-%TODO vedere cosa fare col fatto che in realtà non è ackermann
-The RACECAR model follows the Ackermann front-wheel steering model.\\
-This model is helpful to solve the problem of independence between the rotations described by the wheels: 
-Ackermann steering ensures that all four tires have a common point around which they rotate when the car 
-is turning. This ensures that none of the tires are required to slip in order to complete a turn.\\
-The angle of the inside front tier will be greater than the angle of the outside front tier, this allows the 
-car to rotate successfully around a single point, without slipping. If the angles of front tiers were equal the 
-car won't be as stable as in the previous case, in particular it won't be stable with higher speed.\\
-Each tier path has different radius around the point of rotation, this means that each tier is rotating at a 
-different rate and the outside tiers will rotate at a higher speed than inside tiers. In addition, when the car 
-is rotating the front tiers will move faster than the rear tiers. \\
-For a given \textit{turn radius R}, \textit{wheelbase L} and \textit{track width T} it is possible to define two 
-expressions for the front steering angles of the inner wheel ($\delta_{f,in}$) and of the outer wheel($\delta_{f,out}$).
-\begin{equation}
-    \delta_{f,in} = \tan^{-1}(\frac{L}{R-\frac{T}{2}}) \ \ \ \ \
-    \delta_{f,out} = \tan^{-1}(\frac{L}{R+\frac{T}{2}})
-\end{equation}
-
-\includegraphics[scale=1]{img/ackermann.png}
 
 \section{Plugins}
 RACECAR model is enriched with functionalities that can control the several components specified before in the 
