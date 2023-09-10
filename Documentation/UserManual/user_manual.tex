@@ -165,7 +165,7 @@ If there are no errors the user should be able to see the racecar in a Gazebo en
 			| >{\raggedright\arraybackslash}X |
 		}
 		\hline
-		GazeboRosWheelSlip & Plugin used to replace inner wheel friction phisical model of ROS with a custom one. \\
+		gazebo\_ros\_pacejka & Plugin used to replace inner wheel friction phisical model of ROS with a custom one. \\
 		\hline
 	\end{tabularx}
 \end{center}
@@ -368,112 +368,6 @@ Note that "trajectory tracker" generated trajectories are hard-coded, even if $x
 
 \end{tikzpicture}
 
-\subsubsection{Custom Friction Model}
-
-\begin{tikzpicture}
-	\node[
-	draw,
-	fill=White,
-	minimum width=2cm,
-	minimum height=1.5cm
-	] (LRW-VelContr) {LeftRearWheel\_VelContr};
-	
-	% ---
-	
-	\node[
-	draw,
-	fill=White,
-	minimum width=2cm,
-	minimum height=1.5cm,
-	right=2cm of LRW-VelContr
-	] (AckermannCmd) {vesc/low\_level/ackermann\_cmd\_mux/output};
-	
-	% ---
-	
-	\node[
-	draw,
-	fill=White,
-	minimum width=2cm,
-	minimum height=1.5cm,
-	below=1cm of LRW-VelContr
-	] (RRW-VelContr) {RightRearWheel\_VelContr};
-	
-	\node[
-	draw,
-	fill=White,
-	minimum width=2cm,
-	minimum height=1.5cm,
-	below=1cm of RRW-VelContr
-	] (LFW-VelContr) {LeftFrontWheel\_VelContr};
-	
-	\node[
-	draw,
-	fill=White,
-	minimum width=2cm,
-	minimum height=1.5cm,
-	below=1cm of LFW-VelContr
-	] (RFW-VelContr) {RightFrontWheel\_VelContr};
-	
-	% ---
-	
-	\node[
-	draw,
-	fill=Green,
-	minimum width=2cm,
-	minimum height=1.5cm,
-	right=5cm of RFW-VelContr
-	] (Model) {Custom Model with Friction};
-	
-	% ---
-	
-	\node[
-	draw,
-	fill=White,
-	minimum width=2cm,
-	minimum height=1.5cm,
-	below=1cm of RFW-VelContr
-	] (RefSpeed) {ReferenceSpeed};
-	
-	\node[
-	draw,
-	fill=White,
-	minimum width=2cm,
-	minimum height=1.5cm,
-	below=1cm of RefSpeed
-	] (LSH-PosContr) {LeftSteerHinge\_PosContr};
-	
-	\node[
-	draw,
-	fill=White,
-	minimum width=2cm,
-	minimum height=1.5cm,
-	below=1cm of LSH-PosContr
-	] (RSH-PosContr) {RightSteerHinge\_PosContr};
-	
-	\draw[-{Triangle[scale=2]}] (AckermannCmd.south) -- (Model.north)
-	node[midway, above]{};
-	
-	\draw[-{Triangle[scale=2]}] (Model.west) -- (LRW-VelContr.east)
-	node[midway, above]{PUB};
-	
-	\draw[-{Triangle[scale=2]}] (Model.west) -- (RRW-VelContr.east)
-	node[midway, above]{PUB};
-	
-	\draw[-{Triangle[scale=2]}] (Model.west) -- (LFW-VelContr.east)
-	node[midway, above]{PUB};
-	
-	\draw[-{Triangle[scale=2]}] (Model.west) -- (RFW-VelContr.east)
-	node[midway, above]{PUB};
-	
-	\draw[-{Triangle[scale=2]}] (Model.west) -- (RefSpeed.east)
-	node[midway, above]{PUB};
-	
-	\draw[-{Triangle[scale=2]}] (Model.west) -- (LSH-PosContr.east)
-	node[midway, above]{PUB};
-	
-	\draw[-{Triangle[scale=2]}] (Model.west) -- (RSH-PosContr.east)
-	node[midway, above]{PUB};	
-\end{tikzpicture}
 
 \subsection{Topics meaning}
 
@@ -728,13 +622,18 @@ Once the linearization is performed an \verb|AckermannDriveStamped| message is b
 
 \newpage
 
-\section{Plugin GazeboWheelSlipPlugin}
+\section{Plugin gazebo\_ros\_pacejka}
 \input{pacejka_plugin}
 
 \newpage
 
 \chapter{Python Scripts}
 \input{python_scripts.tex}
+
+\newpage
+
+\chapter{Conclusions}
+\input{conclusions}
 
 \appendix
 

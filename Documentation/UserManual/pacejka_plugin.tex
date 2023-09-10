@@ -20,13 +20,11 @@ The longitudinal force according to the Pacejka Magic Formula depends on the lon
 \\
 The formula used to compute the longitudinal slip is:
 \[
-\sigma_x = 
-  \begin{cases} 
-	\frac{V_x - r_e\Omega}{V_x} & \text{if $V_x > r_e\Omega$} \\
-	\frac{r_e\Omega - V_x}{r_e\Omega} & \text{otherwise}
-  \end{cases}
+\sigma_x =
+	\frac{V_x - r_e\Omega}{r_e\Omega}
 \] \\
 
+The result of this computation is then costrained to satisfy the condition: $|\sigma_x| < 1$. To avoid errors due to the calculator's approximation, we have introduced another check on $\sigma_x$. When it reaches values very close to zero (less than machine epsilon) the longitudinal slip is set to the smallest positive double value for the system.
 After calculating the longitudinal slip, we used the Pacejka formula to compute $F_x$.
 \\
 \[F_x = D_x\sin(C_x\arctan(B_x\sigma_x - E_x(B_x\sigma_x - \arctan(B_x\sigma_x))))\]\\
@@ -37,10 +35,11 @@ The lateral force according to the Pacejka Magic Formula depends on the lateral 
 The formula used to compute the lateral slip is:
 \[
 \alpha = - \arctan{\frac{V_{c_y}}{V_{c_x}}}
-\] \\
+\] 
+The value returned by this expression is in radiants. We have constrained this value to the boundaries $[-\frac{\pi}{2}$,$\frac{\pi}{2}]$. If the $\alpha$ value is lower than the machine epsilon value, we have adjusted it to be no less than the minimum positive double value in the system.
 After calculating the lateral slip, we used the Pacejka formula to compute $F_y$.
 \\
-\[F_y = D_y\sin(C_y\arctan(B_y\alpha - E_y(B_y\alpha - \arctan(B_y\alpha))))\]\\
+\[F_y = D_y\sin(C_y\arctan(B_y\alpha - E_y(B_y\alpha - \arctan(B_y\alpha))))\]
 
 \subsubsection{Parameters of the Pacejka Magic Formula}
 Applying the Pacejka Magic Formula also requires determining the parameters used within the formula itself. 
@@ -121,6 +120,9 @@ Below, we have included the table with the values of all the parameters used wit
 		\hline
 	\end{tabular}
 \end{center}
+The value of these parameters was calculated and tested specifically for the "eight trajectory".\\
+Using these values for other trajectories could lead to unexpected behavior. This is because the parameters of the formula also depend on the angle of curvature that the wheels must sustain during the path. \\
+Optimum values should, therefore, be assigned experimentally for each trajectory.
 
 \subsection{Plugin description}
 
@@ -145,13 +147,27 @@ In particular, each $wheel$ tag includes:
 \end{itemize}
 All these values are applied to all wheels declared in the Element\_Ptr passed firstly to $GazeboRosWheelSlip$ and secondly to $wheel\_slip\_pacejka$ plugin.
 
-\subsubsection{GazeboRosWheelSlip}
+\subsubsection{gazebo\_ros\_pacejka}
 This plugin was necessary to interface our ROS model with the Gazebo plugin wheel\_slip\_pacejka, and permit the exchange of values to update and modify the slip compliance values.
 This plugin calls directly the $Load$ function of wheel\_slip\_pacejka, so it does not add any computation to the slip compliance, it only handles the communication between ROS and Gazebo.
 
 \subsubsection{wheel\_slip\_pacejka}
 This is a plugin that updates ODE wheel slip parameters based on linear wheel spin velocity $radius * spin\_rate$. The ODE slip parameter is documented as force-dependent slip ($slip_1$, $slip_2$) in the ODE user guide, it has units of $[velocity / force] = [m / s / N]$, similar to the inverse of a viscous damping coefficient.
-The $slip\_compliance$ parameters specified in this plugin are unitless, representing the lateral or longitudinal slip ratio to tangential force ratio $tangential / normal\_force$.
+The $slip\_compliance$ parameters specified in this plugin are unitless, representing the lateral or longitudinal slip ratio to the force value.
 At each time step, these compliances are multiplied by the linear wheel spin velocity and divided by the wheel\_normal\_force parameter specified below to match the units of the ODE slip parameters.
 We used these formulas as already present in the $WheelSlipPlugin$, but with the forces computed by using Pacejka Magic Formula and the slip computed with the formulas presented above in this section.
-
+\[
+	slip_1 = \frac{\frac{\sigma_x}{F_x} * spin\_speed}{F_z}
+\]
+\[
+	slip_2 = \frac{\frac{\alpha}{F_y} * spin\_speed}{F_z}
+\]
+To correctly apply friction dynamically, we also had to modify the coefficients of friction along the first and second friction direction, $\mu$ and $\mu_2$.\\
+Whenever we evaluate the friction forces employing Pacejka's formulae, we are also adjusting these values. In this fashion, Gazebo's internal process will apply the fitting friction to the wheels, calculated utilizing consistent parameters.\\
+The expressions we have used to calculate the friction coefficients use the longitudinal or lateral force, depending on the direction chosen, normalized with the force normal to the wheel.
+\[
+	\mu = \frac{F_x}{F_z}
+\]
+\[
+	\mu_2 = \frac{F_y}{F_z}
+\]
