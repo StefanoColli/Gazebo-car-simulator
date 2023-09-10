@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018 Open Source Robotics Foundation
-*/
+ */
 #include <map>
 #include <mutex>
 #include <ros/ros.h>
@@ -29,7 +29,6 @@
 #include <gazebo/transport/Publisher.hh>
 #include <gazebo/transport/Subscriber.hh>
 
-
 #include "../include/wheel_slip_pacejka.hh"
 
 namespace gazebo
@@ -45,83 +44,123 @@ namespace gazebo
   class wheel_slip_pacejka_private
   {
 
-    public: class link_surface_params
+  public:
+    class link_surface_params
     {
       /// \brief Pointer to wheel spin joint.
-      public: physics::joint_weak_ptr joint;
+    public:
+      physics::joint_weak_ptr joint;
 
       /// \brief Pointer to ODESurfaceParams object.
-      public: physics::ODE_surface_params_weak_ptr surface;
+    public:
+      physics::ODE_surface_params_weak_ptr surface;
 
       /// \brief Wheel normal force estimate used to compute slip
       /// compliance for ODE, which takes units of 1/N.
-      public: double wheel_normal_force = 0;
+    public:
+      double wheel_normal_force = 0;
 
       /// \brief Wheel radius extracted from collision shape if not
       /// specified as xml parameter.
-      public: double wheel_radius = 0;
+    public:
+      double wheel_radius = 0;
 
-      public: double longitudinal_slip;
-      public: double lateral_slip;
-      public: int road = 1; //1: Dry , 2: Wet , 3: Snow , 4: Ice
-      public: int front_rear = 0; //0: Front , 1: Rear
+    public:
+      double longitudinal_slip;
+
+    public:
+      double lateral_slip;
+
+    public:
+      int road = 1; // 1: Dry , 2: Wet , 3: Snow , 4: Ice
+    public:
+      int front_rear = 0; // 0: Front , 1: Rear
 
       /// \brief Publish slip for each wheel.
-      public: transport::PublisherPtr slip_pub;
+    public:
+      transport::PublisherPtr slip_pub;
 
       /// \brief Unitless wheel slip compliance in lateral direction.
       /// The parameter should be non-negative,
       /// with a value of zero allowing no slip
       /// and larger values allowing increasing slip.
-      public: double slip_compliance_lateral;
+    public:
+      double slip_compliance_lateral;
 
       /// \brief Unitless wheel slip compliance in longitudinal direction.
       /// The parameter should be non-negative,
       /// with a value of zero allowing no slip
       /// and larger values allowing increasing slip.
-      public: double slip_compliance_longitudinal;
-      
+    public:
+      double slip_compliance_longitudinal;
     };
-    public: ros::Publisher pub_long;
-    public: ros::Publisher pub_lat;
-    public: ros::Publisher pub_Fx;
-    public: ros::Publisher pub_Fy;
-    public: double wheel_longitudinal_force;
-    public: double wheel_lateral_force;
-    public: double slip_lat;
-    public: double slip_long;
-		
+
+  public:
+    ros::Publisher pub_long;
+
+  public:
+    ros::Publisher pub_lat;
+
+  public:
+    ros::Publisher pub_Fx;
+
+  public:
+    ros::Publisher pub_Fy;
+
+  public:
+    double wheel_longitudinal_force;
+
+  public:
+    double wheel_lateral_force;
+
+  public:
+    double slip_lat;
+
+  public:
+    double slip_long;
+
     /// \brief Initial gravity direction in parent model frame.
-    public: ignition::math::Vector3d init_gravity_direction;
+  public:
+    ignition::math::Vector3d init_gravity_direction;
 
     /// \brief Model pointer.
-    public: physics::model_weak_ptr model;
+  public:
+    physics::model_weak_ptr model;
 
     /// \brief Protect data access during transport callbacks
-    public: std::mutex mutex;
+  public:
+    std::mutex mutex;
 
     /// \brief Gazebo communication node
     /// \todo: Transition to ignition-transport in gazebo8
-    public: transport::NodePtr gz_node;
+  public:
+    transport::NodePtr gz_node;
 
     /// \brief Link and surface pointers to update.
-    public: std::map<physics::link_weak_ptr,
-                        link_surface_params> map_link_surface_params;
+  public:
+    std::map<physics::link_weak_ptr,
+             link_surface_params>
+        map_link_surface_params;
 
     /// \brief Link names and their pointers
-    public: std::map<std::string,
-            physics::link_weak_ptr> map_link_names;
+  public:
+    std::map<std::string,
+             physics::link_weak_ptr>
+        map_link_names;
 
     /// \brief Lateral slip compliance subscriber.
     /// \todo: Transition to ignition-transport in gazebo8.
-    public: transport::SubscriberPtr lateral_compliance_sub;
+  public:
+    transport::SubscriberPtr lateral_compliance_sub;
 
     /// \brief Longitudinal slip compliance subscriber.
     /// \todo: Transition to ignition-transport in gazebo8.
-    public: transport::SubscriberPtr longitudinal_compliance_sub;
+  public:
+    transport::SubscriberPtr longitudinal_compliance_sub;
 
     /// \brief Pointer to the update event connection
-    public: event::ConnectionPtr update_connection;
+  public:
+    event::ConnectionPtr update_connection;
   };
 }
 
@@ -129,7 +168,7 @@ using namespace gazebo;
 
 /////////////////////////////////////////////////
 wheel_slip_pacejka::wheel_slip_pacejka()
-  : data_ptr(new wheel_slip_pacejka_private)
+    : data_ptr(new wheel_slip_pacejka_private)
 {
 }
 
@@ -156,6 +195,7 @@ void wheel_slip_pacejka::Fini()
 /////////////////////////////////////////////////
 void wheel_slip_pacejka::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
+  std::cout << "LOADING" << std::endl;
   GZ_ASSERT(_model, "wheel_slip_pacejka model pointer is NULL");
   GZ_ASSERT(_sdf, "wheel_slip_pacejka sdf pointer is NULL");
   ros::NodeHandle nh;
@@ -176,7 +216,7 @@ void wheel_slip_pacejka::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   this->data_ptr->model = _model;
   auto world = _model->GetWorld();
   GZ_ASSERT(world, "world pointer is NULL");
-  { 
+  {
     ignition::math::Vector3d gravity = world->Gravity();
     ignition::math::Quaterniond initial_model_rot =
         _model->WorldPose().Rot();
@@ -192,7 +232,7 @@ void wheel_slip_pacejka::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
   // Read each wheel element
   for (auto wheel_elem = _sdf->GetElement("wheel"); wheel_elem;
-      wheel_elem = wheel_elem->GetNextElement("wheel"))
+       wheel_elem = wheel_elem->GetNextElement("wheel"))
   {
     if (!wheel_elem->HasAttribute("link_name"))
     {
@@ -207,22 +247,22 @@ void wheel_slip_pacejka::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     if (wheel_elem->HasElement("slip_compliance_lateral"))
     {
       params.slip_compliance_lateral =
-        wheel_elem->Get<double>("slip_compliance_lateral");
+          wheel_elem->Get<double>("slip_compliance_lateral");
     }
     if (wheel_elem->HasElement("slip_compliance_longitudinal"))
     {
       params.slip_compliance_longitudinal =
-        wheel_elem->Get<double>("slip_compliance_longitudinal");
+          wheel_elem->Get<double>("slip_compliance_longitudinal");
     }
     if (wheel_elem->HasElement("road"))
     {
       params.road =
-        wheel_elem->Get<int>("road");
+          wheel_elem->Get<int>("road");
     }
     if (wheel_elem->HasElement("front_rear"))
     {
       params.front_rear =
-        wheel_elem->Get<int>("front_rear");
+          wheel_elem->Get<int>("front_rear");
     }
     if (wheel_elem->HasElement("wheel_normal_force"))
     {
@@ -263,7 +303,7 @@ void wheel_slip_pacejka::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
     auto surface = collision->GetSurface();
     auto ode_surface =
-      boost::dynamic_pointer_cast<physics::ODESurfaceParams>(surface);
+        boost::dynamic_pointer_cast<physics::ODESurfaceParams>(surface);
     if (ode_surface == nullptr)
     {
       gzerr << "Could not find ODE Surface "
@@ -367,7 +407,7 @@ void wheel_slip_pacejka::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     auto link = link_surface.first.lock();
     GZ_ASSERT(link, "link should still exist inside Load");
     auto &params = link_surface.second;
-    std::cout << "NAME : "<< _model->GetName() << std::endl;
+    std::cout << "NAME : " << _model->GetName() << std::endl;
     params.slip_pub = this->data_ptr->gz_node->Advertise<msgs::Vector3d>(
         "~/" + _model->GetName() + "/wheel_slip/" + link->GetName());
   }
@@ -393,45 +433,94 @@ physics::ModelPtr wheel_slip_pacejka::GetParentModel() const
 
 double wheel_slip_pacejka::longitudinalSlip(const double _speed, const double _spin_speed) const
 {
-   if( isnan(_speed) || isnan(_spin_speed)) return 1e-5; //_spin_speed == 0.0 &&
-   else{ 
-	double long_slip;
-	if(_speed > _spin_speed)
-	{
-    if (abs(_speed) <= DBL_EPSILON)
+  if (isnan(_speed) || isnan(_spin_speed))
+    return 1e-5;
+  else
+  {
+    double long_slip;
+
+    //   if(_speed > _spin_speed)
+    //   {
+    //     //  if (abs(_speed) <= DBL_EPSILON)
+    //     //  {
+    //     //     long_slip = DBL_MIN;
+    //     //  }else
+    //      {
+    //         long_slip = (_speed - _spin_speed)/_speed;
+    //      }
+    //   }else
+    //  {
+    //     //  if ( abs(_spin_speed) <= DBL_EPSILON)
+    //     //  {
+    //     //     long_slip = DBL_MIN;
+    //     //  }else
+    //      {
+    //         long_slip = (_spin_speed - _speed)/_spin_speed;
+    //      }
+    //  }
+
+    /* Equation taken from course slides. */
+    long_slip = (_speed - _spin_speed) / _spin_speed;
+
+    if (long_slip > 1)
+      long_slip = 1;
+    else if (long_slip < -1)
+      long_slip = -1;
+
+    // long_slip = abs(long_slip);
+    // long_slip += 1;
+    // long_slip /= 2;
+    // long_slip *= 100;
+
+    if (abs(long_slip) <= DBL_EPSILON)
     {
       return DBL_MIN;
     }
-    
-	   long_slip = (_speed - _spin_speed)/_speed;
-	}else
-	{
-    if ( abs(_spin_speed) <= DBL_EPSILON)
-    {
-      return DBL_MAX;
-    }
-    
-	   long_slip = (_spin_speed - _speed)/_spin_speed;
-	}
-	return (_spin_speed - _speed)/_spin_speed;
-   }
+
+    return long_slip;
+  }
 }
 
 double wheel_slip_pacejka::lateralSlip(const double dir_x, const double dir_y) const
 {
-   double slip = 1;
-   if(abs(dir_x) >= DBL_EPSILON && !isnan(dir_x) && !isnan(dir_y))
-	    slip = -std::atan(dir_y/std::abs(dir_x));
-   else{
-        //std::cout <<"HERE"<<std::endl;
-   }
+  double slip = 1e-5;
+  if (!isnan(dir_x) && !isnan(dir_y))
+  {
+    if (abs(dir_x) >= DBL_EPSILON)
+      /* Equation taken from course slides. */
+      slip = -std::atan(dir_y / dir_x);
+    else
+    {
+      // slip = -std::atan(DBL_MAX);
+    }
 
-   return slip;
+    // std::cout << "LAT SLIP RAD: " << slip << std::endl;
+    double sleep_degrees = slip * (180.0 / M_PI);
+
+    // if (sleep_degrees > 90)
+    //   sleep_degrees = 90;
+    // else if (sleep_degrees < -90)
+    //   sleep_degrees = -90;
+
+    if (slip > M_PI / 2)
+      slip = M_PI / 2;
+    else if (slip < -M_PI / 2)
+      slip = -M_PI / 2;
+
+    if (abs(slip) <= DBL_EPSILON)
+    {
+      return DBL_MIN;
+    }
+
+    return slip;
+  }
+
+  return slip;
 }
 
 /////////////////////////////////////////////////
 void wheel_slip_pacejka::GetSlips(
-        std::map<std::string, ignition::math::Vector3d> &_out, double &_long_slip, double &_lat_slip) const
+    std::map<std::string, ignition::math::Vector3d> &_out, double &_long_slip, double &_lat_slip) const
 {
   auto model = this->GetParentModel();
   if (!model)
@@ -464,37 +553,33 @@ void wheel_slip_pacejka::GetSlips(
     // direction with wheel spin axis.
     auto longitudinal_model_axis =
         this->data_ptr->init_gravity_direction.Cross(wheel_model_axis);
-    
+
     double spin_speed = params.wheel_radius * joint->GetVelocity(0);
     double lateral_speed = wheel_model_axis.Dot(wheel_model_linear_vel);
     double longitudinal_speed = longitudinal_model_axis.Dot(wheel_model_linear_vel);
-    
+
     ignition::math::Vector3d slip;
     slip.X(longitudinal_speed - spin_speed);
     slip.Y(lateral_speed);
     slip.Z(spin_speed);
 
-    //params.longitudinal_slip = this->longitudinalSlip(longitudinal_speed, spin_speed);
-    //params.lateral_slip = this->lateralSlip(longitudinal_speed, lateral_speed);
     double sl_x = slip.X();
     _long_slip = this->longitudinalSlip(longitudinal_speed, spin_speed);
     _lat_slip = this->lateralSlip(longitudinal_speed, lateral_speed);
 
     auto name = link->GetName();
     _out[name] = slip;
-
-    
   }
 }
 
- /////////////////////////////////////////////////
+/////////////////////////////////////////////////
 void wheel_slip_pacejka::OnLateralCompliance(ConstGzStringPtr &_msg)
 {
   try
   {
     this->SetSlipComplianceLateral(std::stod(_msg->data()));
   }
-  catch(...)
+  catch (...)
   {
     gzerr << "Invalid slip compliance data[" << _msg->data() << "]\n";
   }
@@ -507,12 +592,11 @@ void wheel_slip_pacejka::OnLongitudinalCompliance(ConstGzStringPtr &_msg)
   {
     this->SetSlipComplianceLongitudinal(std::stod(_msg->data()));
   }
-  catch(...)
+  catch (...)
   {
     gzerr << "Invalid slip compliance data[" << _msg->data() << "]\n";
   }
 }
-
 
 /////////////////////////////////////////////////
 void wheel_slip_pacejka::SetSlipComplianceLateral(const double _compliance)
@@ -554,83 +638,53 @@ void wheel_slip_pacejka::SetSlipComplianceLongitudinal(std::string _wheel_name, 
     auto link = this->data_ptr->map_link_names[_wheel_name];
     this->data_ptr->map_link_surface_params[link].slip_compliance_longitudinal = _compliance;
   }
-  //Computing slip compliance longitudinal with Pacejka MF equations
+  // Computing slip compliance longitudinal with Pacejka MF equations
 
-   /*Parameters:
-	- slip_longitudinal
-	- normal force Fz
-	- Longitudinal force Fx = D * sin(C * arctan(B*(slip_long+H) - E*(B*(slip_long+H) - arctan(B*(slip_long+H))))) + V
+  /*Parameters:
+ - slip_longitudinal
+ - normal force Fz
+ - Longitudinal force Fx = D * sin(C * arctan(B*(slip_long+H) - E*(B*(slip_long+H) - arctan(B*(slip_long+H))))) + V
 
-   Values:
-	- slip_longitudinal = slip_ratio longitudinal (v-w*R)/v OK
-	- normal force = params.normal_force
-	- Pacejka MF values*/
-
+  Values:
+ - slip_longitudinal = slip_ratio longitudinal (v-w*R)/v OK
+ - normal force = params.normal_force
+ - Pacejka MF values*/
 }
-/*void wheel_slip_pacejka::set_Pacejka_Params(double _Cx, double _Cy, double _Bx, double _By, double _Dx, double _Dy, double _Ex, double _Ey)
-{
-   Cx = _Cx;
-   Cy = _Cy;
-   Bx = _Bx;
-   By = _By;
-   Dx = _Dx;
-   Dy = _Dy;
-   Ex = _Ex;
-   Ey = _Ey;
-}*/
+
 double wheel_slip_pacejka::MF_Force(const double _slip, const int _road, const int _XY, const int _FR, const int _LatLong)
 {
-   double B;
-   double C = 1.45;
-   double D = 1.371;
-   double E;
+  double F;
+  double Cx = 1.45;
+  double Cy = 1.45;
+  double Dx = 1390 * 0.01371;
+  double Dy = 1.371;
+  double Bx = 3;
+  double Ex = 0.52;
+  double By = 10;
+  double Ey = 0.97;
+  // double F;
 
-   //_XY == 1 -> lateral Y , 0 -> longitudinal X
-   //_FR == 1 -> rear , 0 -> front
-   //if(!_XY && !_FR) D = 0.1;
-   //else D = 1.371;
+  //  double Cx = 1.9;
+  //  double Cy = 1.9;
 
-   switch(_road){
-	case 1:
-		B = 20;
-		E = 1;
-		break;
-	case 2:
-		B = 12;
-		E = 1;
-		break;
-	case 3:
-		B = 5;
-		E = 1;
-		break;
-	case 4:
-		B = 4;
-		E = 1;
-		break;
-	default:
-		std::cout << "Any surface_type selected" << std::endl;
-		throw std::invalid_argument("Unknown surface type");
-		break;
-   }
-   
-   double F;
-   double Cx = 1.45;
-   double Cy = 1.45;
-   double Dx = 1390*0.01371;
-   double Dy = 1.371;
-   double Bx = 3; //2
-   double Ex = 0.52;
-   double By = 10;
-   double Ey = 0.97;
-   //_latLong == 1 -> lateral
-   if(_LatLong == 1)
-	F = Dy*std::sin(Cy*(std::atan(By*_slip - Ey*(By*_slip - std::atan(By*_slip)))));
-   else
-   {
-        //X longitudinal
-        F = Dx*std::sin(Cx*(std::atan(Bx*_slip - Ex*(Bx*_slip - std::atan(Bx*_slip)))));
-   }
-   return F;
+  //  double Dx = 1;
+  //  double Dy = 1;
+
+  //  double Bx = 10;
+  //  double By = 10;
+
+  //  double Ex = 0.97;
+  //  double Ey = 0.97;
+
+  //_latLong == 1 -> lateral
+  if (_LatLong == 1)
+    F = Dy * std::sin(Cy * (std::atan(By * _slip - Ey * (By * _slip - std::atan(By * _slip)))));
+  else
+  {
+    // X longitudinal
+    F = Dx * std::sin(Cx * (std::atan(Bx * _slip - Ex * (Bx * _slip - std::atan(Bx * _slip)))));
+  }
+  return F;
 }
 
 /////////////////////////////////////////////////
@@ -742,27 +796,31 @@ void wheel_slip_pacejka::Update()
       // so it is used for both slip directions.
       double speed = params.wheel_radius * std::abs(spin_angular_velocity);
 
-      this->data_ptr->wheel_longitudinal_force = this->MF_Force(longitudinal_slip, params.road, 0, params.front_rear, 0); 
-      this->data_ptr->wheel_lateral_force = this->MF_Force(lateral_slip, params.road, 1, params.front_rear, 1); 
+      this->data_ptr->wheel_longitudinal_force = this->MF_Force(longitudinal_slip, params.road, 0, params.front_rear, 0);
+      this->data_ptr->wheel_lateral_force = this->MF_Force(lateral_slip, params.road, 1, params.front_rear, 1);
 
-      //if (abs(force) <= DBL_EPSILON)
-      //{
-      //  this->data_ptr->slip_lat = 0;
-      //  this->data_ptr->slip_long = 0;
-      //  surface->slip1 = 0;
-      //  surface->slip2 = 0;
-      //}
-      //else
-      //{
-        this->data_ptr->slip_lat = lateral_slip/(this->data_ptr->wheel_lateral_force/force);
-        this->data_ptr->slip_long = longitudinal_slip/(this->data_ptr->wheel_longitudinal_force/force);
-        surface->slip1 = speed / force * this->data_ptr->slip_lat;
-        surface->slip2 = speed / force * this->data_ptr->slip_long;
-      //}
-      
-      
-      //surface->slip1 = speed / force * params.slip_compliance_lateral;
-      //surface->slip2 = speed / force * params.slip_compliance_lateral;
+      double lateral_force_ratio = this->data_ptr->wheel_lateral_force;           // (tangential force / normal force) (unitless)
+      double longitudinal_force_ratio = this->data_ptr->wheel_longitudinal_force; // (tangential force / normal force) (unitless)
+
+      double slip_compliance_lateral = lateral_slip / lateral_force_ratio;                // should be unitless
+      double slip_compliance_longitudinal = longitudinal_slip / longitudinal_force_ratio; // should be degrees
+
+      double out_long = (slip_compliance_longitudinal * speed) / force;
+      double out_lat = (slip_compliance_lateral * speed) / force;
+
+      this->data_ptr->slip_lat = lateral_slip;
+      this->data_ptr->slip_long = longitudinal_slip;
+
+      /*
+      The slip1 and slip2 parameters are then dynamically updated by multiplying the normalized slip
+      compliance by the linear wheel spin velocity (radius * angular spin rate)
+      and dividing by a wheel_normal_force parameter supplied to the plugin.
+      */
+      surface->slip1 = out_long;
+      surface->slip2 = out_lat;
+
+      surface->FrictionPyramid()->SetMuPrimary(this->data_ptr->wheel_longitudinal_force / force);
+      surface->FrictionPyramid()->SetMuSecondary(this->data_ptr->wheel_lateral_force / force);
     }
 
     // Try to publish slip data for this wheel
@@ -775,22 +833,22 @@ void wheel_slip_pacejka::Update()
       {
         params.slip_pub->Publish(msg);
       }
-      if(link->GetName() == "left_front_wheel")
+      if (link->GetName() == "left_front_wheel")
       {
-	std_msgs::Float64 msg_long;
-	std_msgs::Float64 msg_lat;
-	std_msgs::Float64 msg_Fx;
-	std_msgs::Float64 msg_Fy;
- 
-	msg_long.data = longitudinal_slip;
-	msg_lat.data = lateral_slip;
-	msg_Fx.data = this->data_ptr->wheel_longitudinal_force;
-	msg_Fy.data = this->data_ptr->wheel_lateral_force;
+        std_msgs::Float64 msg_long;
+        std_msgs::Float64 msg_lat;
+        std_msgs::Float64 msg_Fx;
+        std_msgs::Float64 msg_Fy;
 
-	this->data_ptr->pub_long.publish(msg_long);
-	this->data_ptr->pub_lat.publish(msg_lat);
-	this->data_ptr->pub_Fx.publish(msg_Fx);
-	this->data_ptr->pub_Fy.publish(msg_Fy);
+        msg_long.data = this->data_ptr->slip_long;
+        msg_lat.data = this->data_ptr->slip_lat;
+        msg_Fx.data = this->data_ptr->wheel_longitudinal_force;
+        msg_Fy.data = this->data_ptr->wheel_lateral_force;
+
+        this->data_ptr->pub_long.publish(msg_long);
+        this->data_ptr->pub_lat.publish(msg_lat);
+        this->data_ptr->pub_Fx.publish(msg_Fx);
+        this->data_ptr->pub_Fy.publish(msg_Fy);
       }
     }
   }
