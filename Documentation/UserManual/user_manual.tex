@@ -46,7 +46,7 @@
 \input{user_manual_TITLEPAGE}
 
 \begin{abstract}
-The first part of the report contains a description of the original MIT Racecar framework used, on which our modifications and integrations are based. Main components and principles of working are shows. In the central part are inserted schemes and principles of our packages. For each of them there are variables and parameters which have been used, each one with its indications. In addition there is an explanation of the Pacejka plugin. At the end are shown and described the results obtained in various configurations of integrators and Pacejka modes. A final appendix is added, with practical references to configuration file inclusions and topics.
+The first part of the report contains a description of the original MIT Racecar framework used, on which our modifications and additions are based. Main components, configuration, design files and principles of working are shown. In the central part are inserted schemes and principles of our packages. For each of them there are variables and parameters which have been used, each one with its indications. In addition there is an explanation of the Pacejka plugin to be attached to Gazebo. At the end are shown and described the results obtained in various configurations, even with Pacejka activated. A final appendix is added, with practical references to configuration file inclusions and topics. A brief guide on how to lunch packages is written at the beginning of the report.
 \end{abstract}
 
 \tableofcontents
@@ -132,13 +132,11 @@ There are different configurations which can be used for launching.
 	\item rosbag record -O KinODE.bag --duration=1m /reference\_trajectory /vesc/odom /long\_pub/right\_front /lat\_pub/right\_front /fx\_pub/right\_front /fy\_pub/right\_front
 \end{itemize}
 
+To run using Pacejka it is necessary to set the environment variable PACEJKA=1.
+
 \subsubsection{Kinematic linearizer with Gazebo Physics and Pacejka for wheels}
 
 Same commands of Kinematic linearizer with Gazebo Physics but with Pacejka active.
-
-\subsubsection{Kinematic linearizer with ODE Physics and Pacejka for wheels}
-
-Same commands of Kinematic linearizer with ODE Physics but with Pacejka active.
 
 If there are no errors the user should be able to see the racecar in a Gazebo environment moving depending on chosen trajectory.
 
@@ -354,7 +352,7 @@ Note that "trajectory tracker" generated trajectories are hard-coded, even if $x
 	minimum width=2cm,
 	minimum height=1.5cm,
 	below=3cm of virtualVel
-] (controller) {Controller};
+] (controller) {Linearizer};
 
 \node[
 	draw,
@@ -443,18 +441,18 @@ There is another topic in which "trajectory tracker" publish, the \textit{/refer
 
 \end{tikzpicture}
 
-\subsubsection{Specific Topics}
-
-\begin{center}
-	\begin{tabularx}{\textwidth}{
-			| >{\raggedright\arraybackslash}X
-			| >{\raggedright\arraybackslash}X |
-		}
-		\hline
-		\makecell[lt]{/vesc/low\_level/ \\ ackermann\_cmd\_mux/output} & xyz \\
-		\hline
-	\end{tabularx}
-\end{center}
+%\subsubsection{Specific Topics}
+%
+%\begin{center}
+%	\begin{tabularx}{\textwidth}{
+%			| >{\raggedright\arraybackslash}X
+%			| >{\raggedright\arraybackslash}X |
+%		}
+%		\hline
+%		\makecell[lt]{/vesc/low\_level/ \\ ackermann\_cmd\_mux/output} & xyz \\
+%		\hline
+%	\end{tabularx}
+%\end{center}
 
 \chapter{Detailed Package Description}
 
@@ -496,10 +494,12 @@ There is another topic in which "trajectory tracker" publish, the \textit{/refer
 \chapter{launch package inclusion}
 	
 	\usetikzlibrary{arrows.meta}
-\begin{center}
+\begin{figure}[H]
+	\makebox[\textwidth][c] 
+	{
 	\begin{tikzpicture}[
-		scale=0.75,
-		level/.style={level distance=7.2em, sibling distance=21em},
+		scale=0.7,
+		level/.style={level distance=10em, sibling distance=21em},
 		every node/.style = {
 			shape=rectangle, 
 			solid,
@@ -532,7 +532,8 @@ There is another topic in which "trajectory tracker" publish, the \textit{/refer
 			edge from parent node {\textit{include}}
 		};
 	\end{tikzpicture}
-\end{center}
+	}
+\end{figure}
 	
 %	\begin{tikzpicture}[
 %		sibling distance=18em,
