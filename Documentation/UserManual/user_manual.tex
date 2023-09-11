@@ -46,6 +46,7 @@
 \input{user_manual_TITLEPAGE}
 
 \begin{abstract}
+The first part of the report contains a description of the original MIT Racecar framework used, on which our modifications and integrations are based. Main components and principles of working are shows. In the central part are inserted schemes and principles of our packages. For each of them there are variables and parameters which have been used, each one with its indications. In addition there is an explanation of the Pacejka plugin. At the end are shown and described the results obtained in various configurations of integrators and Pacejka modes. A final appendix is added, with practical references to configuration file inclusions and topics.
 \end{abstract}
 
 \tableofcontents
@@ -87,31 +88,59 @@ sudo apt install ros-noetic-ros-control
 sudo apt install ros-noetic-ros-controllers
 \end{verbatim}
 
+Also Python rospkg should be installed to run bag reading scripts.
+
 \noindent Otherwise an error will be thrown when \verb|catkin_make| command is called.
 
 \subsection{Additional modifications}
 
 In some cases, to avoid conflicts, it's required to change Python environment to version 3 in each file of the original packages.
-In particular, if Python environment is set to 3, modifications are needed for \verb|joy_teleop.py| file:
+For example, if Python environment is set to 3, modifications are needed for \verb|joy_teleop.py| file:
 
 \begin{itemize}
 	\item Row 277: replace ',' with 'as'
 	\item Row 282: replace \verb|iteritems| with \verb|items|
 \end{itemize}
 
+These modifications are applied in our version of the libraries, so it's not necessary to update them. We have linked original MIT repository sub-modules updating them.
+
 \section{Launch}
 
 \subsection{Original Project}
 
-In order to launch original project, once it's compiled following ROS guide, following steps should be followed:
+In order to launch original project, once it's compiled following ROS guide, following steps should be followed.
+
+There are different configurations which can be used for launching.
+
+\subsubsection{Kinematic linearizer with Gazebo Physics}
 
 \begin{itemize}
-	\item (run) \verb|roscore|
-	\item (run) \verb|keyboard_teleop.py|
-	\item (run) \verb|racecar_gazebo racecar.tunnel|
+	\item roscore
+	\item roslaunch src/mit\_racecar/racecar\_gazebo/racecar\_gazebo/launch/racecar.launch [roslaunch racecar\_gazebo racecar.launch]
+	\item roslaunch src/car\_kinematic\_linearizer/launch/car\_kin\_linearizer.launch [roslaunch car\_kinematic\_linearizer car\_kin\_linearizer.launch]
+	\item roslaunch src/trajectory\_traker/launch/trajectory\_tracker.launch [roslaunch trajectory\_traker trajectory\_traker.launch]
+	\item rosbag record -O KinGazebo.bag --duration=1m /reference\_trajectory /vesc/odom /long\_pub/right\_front /lat\_pub/right\_front /fx\_pub/right\_front /fy\_pub/right\_front
 \end{itemize}
 
-If there are no errors the user should be able to see the racecar in a Gazebo environment. WASD keys on keyboard produce car moves.
+\subsubsection{Kinematic linearizer with ODE Physics}
+
+\begin{itemize}
+	\item roscore
+	\item roslaunch ode\_simulator ode\_simulator.launch
+	\item roslaunch src/car\_kinematic\_linearizer/launch/car\_kin\_linearizer.launch [roslaunch car\_kinematic\_linearizer car\_kin\_linearizer.launch]
+	\item roslaunch src/trajectory\_traker/launch/trajectory\_tracker.launch [roslaunch trajectory\_traker trajectory\_traker.launch]
+	\item rosbag record -O KinODE.bag --duration=1m /reference\_trajectory /vesc/odom /long\_pub/right\_front /lat\_pub/right\_front /fx\_pub/right\_front /fy\_pub/right\_front
+\end{itemize}
+
+\subsubsection{Kinematic linearizer with Gazebo Physics and Pacejka for wheels}
+
+Same commands of Kinematic linearizer with Gazebo Physics but with Pacejka active.
+
+\subsubsection{Kinematic linearizer with ODE Physics and Pacejka for wheels}
+
+Same commands of Kinematic linearizer with ODE Physics but with Pacejka active.
+
+If there are no errors the user should be able to see the racecar in a Gazebo environment moving depending on chosen trajectory.
 
 \chapter{General Project Structure}
 
@@ -429,196 +458,23 @@ There is another topic in which "trajectory tracker" publish, the \textit{/refer
 
 \chapter{Detailed Package Description}
 
-\section{Package (original) ackermann\_msgs}
-\section{Package (original) racecar}
-\section{Package (original) racecar\_gazebo}
+\section{Package car\_dynamic\_linearizer}
+\input{car_dynamic_linearizer}
 
-\section{Package car\_control}
+\newpage
 
-\subsection{Intro}
-
-Even if this package is not used, it's correct to do a description of the objective it should have reached.
-
-The aim was to implement a dynamic controller, which perform exact linearization of the nonlinear bicycle dynamic model. To do this it needs more parameter respect to the kinematic one.
-
-In addition, we put a scheme (\ref{fig:dynamic_model}) of the principal parameters and variables  used for linearization.
-
-\begin{figure}[h]
-	\includegraphics[scale=0.3]{dynamic_model}
-	\caption{dynamic model with main parameters and variables}
-	\label{fig:dynamic_model}
-\end{figure}
-
-\subsection{Configuration}
-
-\begin{center}
-	\begin{tabularx}{\textwidth}{
-			| >{\raggedright\arraybackslash}X
-			| >{\arraybackslash}X |
-		}
-		\hline
-		\multicolumn{2}{|c|}{\textbf{Input values}} \\
-		\hline
-		$Vp_x$ & Point velocity x \\
-		\hline
-		$Vp_y$ & Point velocity y \\
-		\hline
-		$\psi$ & Yaw\footnote{In the System Scheme, this is represented by $\theta_{out}$} \\
-		\hline
-		$\dot{\psi}$ & Yaw rate\footnote{In the System Scheme, this is \textbf{not} represented (as we have used, for tests, only the kinematic model)} \\
-		\hline
-	\end{tabularx}
-	
-	\vspace{0.5cm}
-	
-	\begin{tabularx}{\textwidth}{
-			| >{\raggedright\arraybackslash}X
-			| >{\arraybackslash}X |
-		}
-		\hline
-		\multicolumn{2}{|c|}{\textbf{Model parameters}} \\
-		\hline
-		$C_f$, $C_r$ & Viscuous friction coefficients \\
-		\hline
-		a, b & Distance between wheels center and Center of Gravity \\		
-		\hline
-		$M$ & Vehicle mass \\
-		\hline
-		$\epsilon$ & Distance between Center of Gravity and a point $P$, along the velocity vector. Linearization is done around point P. This parameter should be chosen empirically \\
-		\hline
-	\end{tabularx}
-	
-	\vspace{0.5cm}
-	
-	\begin{tabularx}{\textwidth}{
-			| >{\raggedright\arraybackslash}X
-			| >{\arraybackslash}X |
-		}
-		\hline
-		\multicolumn{2}{|c|}{\textbf{Intermediate computed values}} \\
-		\hline
-		$\beta$ & Sideslip angle: $\tan^{-1}\left(\frac{Vp_y}{Vp_x}\right)$ \\
-		\hline
-	\end{tabularx}
-	
-	\vspace{0.5cm}
-	
-	\begin{tabularx}{\textwidth}{
-			| >{\raggedright\arraybackslash}X
-			| >{\arraybackslash}X |
-		}
-		\hline
-		\multicolumn{2}{|c|}{\textbf{Output values}} \\
-		\hline
-		$V$ & Point absolute velocity \\
-		\hline
-		$\delta$ & Steering angle \\
-		\hline
-		$\omega$ & Steering speed \\
-		\hline
-	\end{tabularx}
-\end{center}
-
-\subsection{Launch}
-
-There is a lunch file which \textbf{should be used to execute the node}. This contains also information about debugging level and loads configuration file.
-
-\subsection{Node car\_control}
-
-\[
-\beta = \tan^{-1}\left(\frac{Vp_y}{Vp_x}\right)
-\]
-\[
-\delta = \frac{MV}{C_f}\omega + \frac{C_f + C_r}{C_f}\beta - \frac{bC_r - aC_f}{C_f}\frac{\dot{\psi}}{V}
-\]
-\[
-\begin{bmatrix}
-	V \\
-	\omega
-\end{bmatrix}
-=
-\begin{bmatrix}
-	\cos(\beta + \psi) & \sin(\beta + \omega) \\
-	-\frac{\sin(\beta + \psi)}{\epsilon} & \frac{\cos(\beta + \psi)}{\epsilon} \\
-\end{bmatrix}
-\begin{bmatrix}
-	Vp_x \\
-	Vp_y
-\end{bmatrix}
-\]
-
-\section{Package car\_kinematic\_control}
-
-\subsection{Intro}
-
-Before starting the explanation, we add a brief high level description of Quaternions, which are used in messages to represent orientations. Even a distinction between pose and position is done.
-
-\textbf{Quaternion}: a different way to describe the orientation of a frame only. It's an alternative to Yaw, Pitch and Roll. A quaternion has four parameters: x, y, z, w. Pay attention, they are NOT a position vector.
-
-\textbf{Position}: position of the robot in a 3D space.
-
-\textbf{Pose}: position (3 DOF) + orientation (3 DOF).
-
-In conclusion the pose has 6 D.O.F. which are: x, y, z, roll, pitch, yaw. Euler angles can be converted to quaternions, which are better. Transformation functions of ROS can do this conversion and the reverse one.
-
-In addition, we put a scheme (\ref{fig:bicycle_vehicle}) of the principal parameters and variables  used for linearization.
-
-\begin{figure}[h]
-	\includegraphics[scale=0.4]{kinematic_model}
-	\caption{bicycle vehicle with main parameters and variables}
-	\label{fig:bicycle_vehicle}
-\end{figure}
-
-\subsection{Configuration}
-
-In the package there is a configuration file, containing: the parameter L, which represents distance between rear and front wheels; the parameter $\epsilon$, the distance between Center of Gravity and a point $P$, along the velocity vector. Linearization is done around point P. This parameter should be chosen empirically.
- 
-Both are used in the linearization.
-
-\subsection{Launch}
-
-There is a lunch file which \textbf{should be used to execute the node}. This contains also information about debugging level and loads configuration file.
-
-\subsection{Node car\_kin\_controller}
-
-\textbf{Node requirements}: distance between rear and front wheels as parameter.
-
-The node has two callbacks:
-
-\begin{itemize}
-	\item One used to retrieve desired velocities of the point. These velocities are computed by trajectory tracker and published in \verb|/virtual_velocities| topic, subscribed by the controller node.
-	\item One used to retrieve the orientation of the car around z axis. This is done reading from \verb|/vesc/odom|. The information retrieved are in the form of a quaternion and are converted into roll, pitch and yaw. Yaw is taken. In addition, even the speed around z axis is read (\verb|twist.angular.z|).
-\end{itemize}
-
-The node perform an exact linearization of the nonlinear bicycle cinematic model. The change of coordinates is applied as follows:
-
-\[
-V = V_{Xp}cos(\theta) + V_{Yp}sin(\theta)
-\]
-
-\[
-\phi = \arctan\left(\frac{l}{\epsilon} \frac{ V_{Yp}cos(\theta) - V_{Xp}sin(\theta) }{ V_{Xp}cos(\theta) + V_{Yp}sin(\theta) }\right)
-\]
-
-Where 
-
-\begin{itemize}
-	\item $l$ is the distance between rear and front wheels
-	\item $\epsilon$ is the distance between Center of Gravity and a point $P$
-	\item $V_{Xp}$ and $V_{Yp}$ are the desired point velocities
-	\item $\theta$ is the car orientation around z-axis
-	\item $\phi$ is the steering angle
-	\item $V$ is the driving velocity of the front wheel
-\end{itemize}
-
-In addition, the program compute the steering speed as $\omega = \frac{V}{l}\tan(\phi)$. This value is not used in the construction of the message because it's ignored by the model.
-
-Once the linearization is performed an \verb|AckermannDriveStamped| message is built, containing $V$ and $\phi$. This message is published on \\ \verb|/vesc/ackermann_cmd_mux/input/navigation| topic, which is read by the model to make the car move. Linearization and command sending operations are repeated in a loop, which is the core of the node.
+\section{Package car\_kinematic\_linearizer}
+\input{car_kinematic_linearizer}
 
 \newpage
 
 \section{Package trajectoy\_tracker}
 \input{trajectory_tracker}
+
+\newpage
+
+\section{Package ode\_simulator}
+\input{ode_simulator}
 
 \newpage
 
@@ -638,11 +494,11 @@ Once the linearization is performed an \verb|AckermannDriveStamped| message is b
 \appendix
 
 \chapter{launch package inclusion}
-
-\begin{landscape}
 	
 	\usetikzlibrary{arrows.meta}
+\begin{center}
 	\begin{tikzpicture}[
+		scale=0.75,
 		level/.style={level distance=7.2em, sibling distance=21em},
 		every node/.style = {
 			shape=rectangle, 
@@ -676,25 +532,24 @@ Once the linearization is performed an \verb|AckermannDriveStamped| message is b
 			edge from parent node {\textit{include}}
 		};
 	\end{tikzpicture}
+\end{center}
 	
-	\begin{tikzpicture}[
-		sibling distance=18em,
-		every node/.style = {
-			shape=rectangle, 
-			draw, 
-			align=center,
-			top color=white, 
-			bottom color=green!20
-		},
-		edge from parent/.style= {
-			draw,
-			-latex
-		}
-		]
-		\node {\textbf{PKG: racecar\_control} \\ keyboard\_teleop.py \\ <perform publish>};
-	\end{tikzpicture}
-	
-\end{landscape}
+%	\begin{tikzpicture}[
+%		sibling distance=18em,
+%		every node/.style = {
+%			shape=rectangle, 
+%			draw, 
+%			align=center,
+%			top color=white, 
+%			bottom color=green!20
+%		},
+%		edge from parent/.style= {
+%			draw,
+%			-latex
+%		}
+%		]
+%		\node {\textbf{PKG: racecar\_control} \\ keyboard\_teleop.py \\ <perform publish>};
+%	\end{tikzpicture}
 
 \begin{center}
 	\begin{tabularx}{\linewidth}{|X|X|X|}

@@ -1,0 +1,73 @@
+\subsection{Package description}
+
+Originally speed and steer commands are sent to Gazebo, which has an internal ODE integrator (maybe slightly different). We have detached Gazebo inserting course ODE version to see if results are different.
+
+\subsubsection{Publications and Subscriptions}
+
+\begin{itemize}
+	\item ode\_simulator subscribes to /vesc/ackermann\_cmd\_mux/input/navigation in order to receive speed and steer direction to move the car. Gazebo does not subscribe directly to this topic but read from internal topics which interpret input sent by navigation one.
+	\item The simulator publishes on /vesc/odom the actual position and rotation of the car, used by both tracker and linearizer.
+\end{itemize}
+
+\subsection{Configuration}
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{
+			| >{\raggedright\arraybackslash}X
+			| >{\arraybackslash}X |
+		}
+		\hline
+		\multicolumn{2}{|c|}{\textbf{Simulator configuration parameters}} \\
+		\hline
+		/ode\_simulator/tyre\_model & Tyre model (0, linear; 1, fiala with saturation; 2, fiala without saturation) \\
+		\hline
+		/ode\_simulator/dt & Integration step \\
+		\hline
+	\end{tabularx}
+	
+	\vspace{0.5cm}
+	
+	\begin{tabularx}{\textwidth}{
+			| >{\raggedright\arraybackslash}X
+			| >{\arraybackslash}X |
+		}
+		\hline
+		\multicolumn{2}{|c|}{\textbf{Vehicle parameters}} \\
+		\hline
+		/ode\_simulator/m & Vehicle mass \\
+		\hline
+		/ode\_simulator/cog\_a & Distance of COG from front axle \\
+		\hline
+		/ode\_simulator/cog\_b & Distance of COG from rear axle \\
+		\hline
+		/ode\_simulator/mu & Ground friction coefficient \\
+		\hline
+		/ode\_simulator/Cf & Front cornering stiffness \\
+		\hline
+		/ode\_simulator/Cr & Rear cornering stiffness \\
+		\hline
+		/ode\_simulator/Iz & Yaw moment of inertia \\
+		\hline
+	\end{tabularx}
+	
+	\vspace{0.5cm}
+	
+	\begin{tabularx}{\textwidth}{
+			| >{\raggedright\arraybackslash}X
+			| >{\arraybackslash}X |
+		}
+		\hline
+		\multicolumn{2}{|c|}{\textbf{Vehicle initial state}} \\
+		\hline
+		/ode\_simulator/r0 & Initial yaw rate \\
+		\hline
+		/ode\_simulator/beta0 & Initial sideslip \\
+		\hline
+		/ode\_simulator/x0 & Initial position x \\
+		\hline
+		/ode\_simulator/y0 & Initial position y \\
+		\hline
+		/ode\_simulator/psi0 & Initial heading \\
+		\hline
+	\end{tabularx}
+\end{center}
