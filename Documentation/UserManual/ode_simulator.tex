@@ -9,6 +9,43 @@ Originally speed and steer commands are sent to Gazebo, which has an internal OD
 	\item The simulator publishes on /vesc/odom the actual position and rotation of the car, used by both tracker and linearizer.
 \end{itemize}
 
+\begin{tikzpicture}
+	\node[
+	draw,
+	fill=White,
+	minimum width=2cm,
+	minimum height=1.5cm
+	] (tracker) {/vesc/odom};
+	
+	\node[
+	draw,
+	fill=Green,
+	minimum width=2cm,
+	minimum height=1.5cm,
+	below=3cm of tracker
+	] (model) {ODE Integrator};
+	
+	\node[
+	draw,
+	fill=White,
+	minimum width=2cm,
+	minimum height=1.5cm,
+	below=3cm of refVelocity
+	] (controller) {/vesc/ackermann\_cmd\_mux/input/navigation};	
+	
+	% ---
+	
+	\draw[-{Triangle[scale=2]}] ($(controller.west) + (0, 0)$) -- ($(model.east) + (0, 0)$)
+	node[midway, above]{SUB to};
+	
+	% ---
+	
+	\draw[-{Triangle[scale=2]}] ($(model.north) + (+1/2, 0)$) -- ($(tracker.south) + (+1/2, 0)$)
+	node[midway, left]{PUB in};
+	
+	
+\end{tikzpicture}
+
 \subsection{Configuration}
 
 \begin{center}
