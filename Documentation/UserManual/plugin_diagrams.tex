@@ -1,0 +1,216 @@
+
+\begin{tikzpicture}
+\node[
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm
+] (racecarGazebo) {racecar\_gazebo};
+
+\node[
+	draw,
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of racecarGazebo
+] (robotNamespace) {Robot Namespace};
+
+\node[
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of robotNamespace
+] (rightFrontWheel) {right\_front\_wheel};
+
+% --- right front wheel NESTED
+\node[
+	draw,
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of rightFrontWheel
+] (wheelNormalForce) {wheel\_normal\_force};
+
+\node[
+	draw,
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of wheelNormalForce
+] (wheelRadius) {wheel\_radius};
+
+\node[
+	draw,
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of wheelRadius
+] (sleepCompLat) {sleep\_compliance\_lat};
+
+\node[
+	draw,
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of sleepCompLat
+] (sleepCompLong) {sleep\_compliance\_long};
+% --- END right front wheel NESTED
+
+\node[
+	draw,
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of sleepCompLong
+] (rightRearWheel) {right\_rear\_wheel};
+
+\node[
+	draw,
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of rightRearWheel
+] (leftFrontWheel) {left\_front\_wheel};
+
+\node[
+	draw,
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of leftFrontWheel
+] (leftRearWheel) {left\_rear\_wheel};
+
+% --- BEGIN gazebo ros wheel
+
+\node[
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	right=4cm of racecarGazebo
+] (gazeboROSWheelSlip) {gazebo\_ros\_wheel\_slip};
+
+\node[
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of gazeboROSWheelSlip
+] (load) {Load};
+
+\node[
+	draw,
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of load
+] (model) {Model};
+
+\node[
+	draw,
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of model
+] (elementsPtr) {Elements\_Ptr};
+
+% --- END gazebo ros wheel
+
+% --- BEGIN wheel slip plugin
+
+\node[
+	draw,
+	fill=LimeGreen,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	right=4cm of sleepCompLat
+] (wheelSlipPlugin) {wheel\_slip\_plugin};
+
+% --- END wheel slip plugin
+
+% --- BEGIN ODE params
+
+\node[
+	draw,
+	fill=Yellow,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	right=1cm of rightRearWheel
+] (ODEparams) {ODESurfaceParams};
+
+% --- END ODE params
+
+% --- BEGIN slips
+
+\node[
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	right=1cm of ODEparams
+] (slipRFW) {PATH/right\_front\_wheel};
+
+\node[
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of slipRFW
+] (slipRRW) {PATH/right\_rear\_whee};
+
+\node[
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of slipRRW
+] (slipLFW) {PATH/left\_front\_whee};
+
+\node[
+	fill=White,
+	minimum width=4.5cm,
+	minimum height=1cm,
+	below=0.2cm of slipLFW
+] (slipLRW) {PATH/left\_rear\_whee};
+
+% --- END slips
+
+\begin{scope}[on background layer]	
+	\node[
+		fit={(rightFrontWheel) (wheelNormalForce) (wheelRadius) (sleepCompLat) (sleepCompLong)},
+		draw
+	] (outer1b) {};
+	
+	\node[
+		fit={(racecarGazebo) (robotNamespace) (rightFrontWheel) (outer1b) (rightRearWheel) (leftFrontWheel) (leftRearWheel)},
+		draw
+	] (outer1a) {};
+
+% ---
+
+	\node[
+		fit={(load) (model) (elementsPtr)},
+		draw
+	] (outer2b) {};
+	
+	\node[
+		fit={(gazeboROSWheelSlip) (outer2b)},
+		draw
+	] (outer2a) {};
+
+% ---
+
+	\node[
+		fill=Yellow,
+		fit={(slipRFW) (slipRRW) (slipLFW) (slipLRW)},
+		draw
+	] (outer5a) {};
+\end{scope}
+
+\draw[-{Triangle[scale=2]}] (robotNamespace.east) -- (model.west);
+
+\draw[-{Triangle[scale=2]}] (rightFrontWheel.east) -- (elementsPtr.west);
+\draw[-{Triangle[scale=2]}] (rightRearWheel.east) -- (elementsPtr.west);
+\draw[-{Triangle[scale=2]}] (leftFrontWheel.east) -- (elementsPtr.west);
+\draw[-{Triangle[scale=2]}] (leftRearWheel.east) -- (elementsPtr.west);
+
+\draw[-{Triangle[scale=2]}] (outer2a.south) -- (wheelSlipPlugin.north);
+
+\draw[-{Triangle[scale=2]}] (wheelSlipPlugin.south) -- (ODEparams.north);
+\draw[-{Triangle[scale=2]}] (wheelSlipPlugin.south) -- (outer5a.north);
+
+\end{tikzpicture}
